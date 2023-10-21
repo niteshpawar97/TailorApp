@@ -1,61 +1,74 @@
-// src/views/DashboardView.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import DashboardController from '../controllers/DashboardController';
-import UserModel from '../models/UserModel'; // Import the UserModel
+import { View, Text, Button } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomHeader from './CustomHeader'; // Import the CustomHeader component
 
-const DashboardView = ({ navigation }) => {
-  const [user, setUser] = useState<UserModel | null>(null);
+
+function DashboardView() {
+  const [user, setUser] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchData = async () => {
+    // Function to fetch the user details from AsyncStorage
+    const fetchUserDetails = async () => {
       try {
-        const userData = await DashboardController.fetchUserData();
-        const userModel = UserModel.fromJSON(userData); // Parse the user data using UserModel
-        setUser(userModel);
+        const userData = await AsyncStorage.getItem('user');
+        if (userData !== null) {
+          // User details found in AsyncStorage; parse the JSON data
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          console.log(parsedUser.username, ': login success');
+        }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error retrieving user details:', error);
       }
     };
 
-    fetchData();
+    // Call the function to fetch user details when the component mounts
+    fetchUserDetails();
   }, []);
 
-  const handleLogout = () => {
-    navigation.navigate('Login'); // Make sure the route name matches your navigation setup
-  };
+// Function to handle user logout
+const handleLogout = async () => {
+  try {
+    // Clear user data from AsyncStorage
+    await AsyncStorage.removeItem('user');
+    console.log('User data cleared from AsyncStorage.');
+
+    // Navigate to the login or home screen
+    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+    console.log('Navigated to the Login screen.');
+  } catch (error) {
+    console.error('Error logging out:', error);
+  }
+};
+
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>User Dashboard</Text>
-      {user ? (
-        <View>
-          <Text>User ID: {user.user_id}</Text>
-          <Text>Role: {user.role}</Text>
-          <Text>Username: {user.username}</Text>
-          <Text>Subscription Type: {user.subscription_type}</Text>
-          <Text>Session ID: {user.session_id}</Text>
-          <Text>Session Date: {user.session_date}</Text>
-          {/* Display other user data here */}
+    <View className="flex-1 flex-col">
+    
+      <View className="flex-1 flex justify-between">
+        <View className="flex-1 bg-white p-4">
+          {user && (
+            <>
+              <Text className="text-2xl text-yellow-600 font-semibold">User: {user.username}</Text>
+              <Text className="text-2xl text-yellow-600 font-semibold">Password: {user.password_hash}</Text>
+              <Text className="text-2xl text-yellow-600 font-semibold">Subscription type: {user.subscription_type}</Text>
+            </>
+          )}
+          <Text className="mt-4 text-xl font-extrabold text-gray-800">Welcome to the TailorApp!</Text>
         </View>
-      ) : (
-        <Text>Loading user data...</Text>
-      )}
-      <Button title="Log Out" onPress={handleLogout} />
+
+        <View className="flex-1 flex flex-col">
+          <View className="flex-1 bg-gray-300 p-4">
+            <Text className="text-lg font-semibold">Footer</Text>
+            
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-});
 
 export default DashboardView;

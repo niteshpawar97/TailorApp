@@ -3,7 +3,9 @@ import Config from '../api/Config';
 const { LOGIN_API } = Config;
 
 const LoginController = {
+  
   login: async (username, password) => {
+    console.log(LOGIN_API);
     try {
       const response = await fetch(LOGIN_API, {
         method: 'POST',
@@ -29,7 +31,7 @@ const LoginController = {
         throw new Error(data.message);
       }
 
-      console.log('Login successful');
+      // console.log('Login successful');
       return data.user;
     } catch (error) {
       console.error('Login error:', error);

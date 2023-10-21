@@ -3,6 +3,7 @@ import {View, Image, Text, TextInput, TouchableOpacity} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {useNavigation} from '@react-navigation/native';
 import LoginController from '../controllers/LoginController';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const LoginView = () => {
   const [username, setUsername] = useState('');
@@ -10,11 +11,25 @@ const LoginView = () => {
   const navigation = useNavigation();
 
   const handleLogin = async () => {
+    
     try {
       const user = await LoginController.login(username, password); // Call the login method from LoginController
 
       // Handle a successful login, for example, navigate to the dashboard or update the UI.
       console.log('Login successful:', user);
+
+      try {
+        // Save user details in AsyncStorage
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        console.log('User details saved successfully');
+      } catch (error) {
+        console.error('Error saving user details:', error);
+      }
+
+       // Navigate to the DashboardView
+       navigation.navigate('Dashboard');
+
+
     } catch (error) {
       // Handle login errors, for example, display an error message to the user.
       console.error('Login error:', error.message);
@@ -34,7 +49,7 @@ const LoginView = () => {
           Welcome to Login
         </Text>
         <TextInput
-          className="border border-gray-400 rounded-md px-4 py-2 mt-2 w-full"
+         className="placeholder-gray-800 text-placeholder-gray-800 border border-gray-400 rounded-md px-4 py-2 mt-2 w-full"
           placeholder="Username"
           onChangeText={text => setUsername(text)}
           value={username}
@@ -43,7 +58,7 @@ const LoginView = () => {
         />
 
         <TextInput
-          className="border border-gray-400 rounded-md px-4 py-2 mt-6 mb-5 w-full"
+          className="placeholder-gray-800 text-placeholder-gray-800 border border-gray-400 rounded-md px-4 py-2 mt-6 mb-5 w-full "
           placeholder="Password"
           onChangeText={text => setPassword(text)}
           value={password}
