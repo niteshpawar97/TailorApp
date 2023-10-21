@@ -3,7 +3,6 @@ import Config from '../api/Config';
 const { LOGIN_API } = Config;
 
 const LoginController = {
-  
   login: async (username, password) => {
     console.log(LOGIN_API);
     try {
@@ -16,13 +15,11 @@ const LoginController = {
       });
 
       if (!response.ok) {
-        // Handle HTTP errors more explicitly
         const errorData = await response.json();
-        if (errorData && errorData.message) {
-          throw new Error('Login failed with HTTP status: ' + response.status + '. ' + errorData.message);
-        } else {
-          throw new Error('Login failed with HTTP status: ' + response.status);
-        }
+        const errorMessage = errorData && errorData.message
+          ? errorData.message
+          : `Login failed with HTTP status: ${response.status}`;
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -31,11 +28,10 @@ const LoginController = {
         throw new Error(data.message);
       }
 
-      // console.log('Login successful');
       return data.user;
     } catch (error) {
       console.error('Login error:', error);
-      throw error;
+      throw new Error(error);
     }
   },
 };
