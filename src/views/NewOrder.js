@@ -10,6 +10,12 @@ import {
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Config from '../api/Config';
+import {
+  sendPostRequest,
+  sendGetRequest,
+  sendPutRequest,
+  sendDeleteRequest,
+} from '../helpers/apiRequestWithHeaders';
 
 const {CUSTOMER_API} = Config;
 
@@ -25,19 +31,19 @@ const NewOrderView = () => {
     if (phone.length >= 4) {
       // Fetch suggestions when the phone number input has 4 or more characters
       fetchSuggestions();
+      setShouldFetchSuggestions(true);
     }
   }, [phone]);
 
   const fetchSuggestions = async () => {
     if (shouldFetchSuggestions) {
       try {
-        const response = await fetch(`${CUSTOMER_API}/${phone}`);
-
-        const data = await response.json();
-
+        // Construct the URL
+        const url = `${CUSTOMER_API}/${phone}`;
+        const data = await sendGetRequest(url);
+        console.log('GET Response:', data);
         if (data.error === false) {
           setSuggestions(data.customer);
-          
         }
       } catch (error) {
         console.error('Error fetching suggestions:', error);
@@ -58,10 +64,12 @@ const NewOrderView = () => {
     setPhone(text); // Update the "Phone" input value
     setWhatsApp(text); // Automatically populate the "WhatsApp" input
 
-     // If the phone number is cleared, re-enable fetching suggestions
-  if (text === '') {
-    setShouldFetchSuggestions(true);
-  }
+    // If the phone number is cleared, re-enable fetching suggestions
+    if (phone.length <= 4) {
+      // if (text === '') {
+      setShouldFetchSuggestions(true);
+      setSuggestions([]); // Clear suggestions
+    }
   };
 
   return (
@@ -82,8 +90,8 @@ const NewOrderView = () => {
             label="Phone Number"
             className={
               suggestions.length > 0
-                ? "placeholder-gray-800 text-placeholder-gray-800 rounded-md w-full -mb-6"
-                : "placeholder-gray-800 text-placeholder-gray-800 rounded-md w-full mt-2"
+                ? 'placeholder-gray-800 text-placeholder-gray-800 rounded-md w-full -mb-6'
+                : 'placeholder-gray-800 text-placeholder-gray-800 rounded-md w-full mt-2'
             }
             placeholder="Phone"
             // onChangeText={text => setPhone(text)}
@@ -100,7 +108,9 @@ const NewOrderView = () => {
               renderItem={({item}) => (
                 <TouchableOpacity onPress={() => handleSelectSuggestion(item)}>
                   <View className="border border-gray-400 px-4 py-1">
-                    <Text className="text-base text-gray-800">{item.phone}</Text>
+                    <Text className="text-base text-gray-800">
+                      {item.phone}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -127,7 +137,7 @@ const NewOrderView = () => {
           />
 
           <TouchableOpacity
-            className="bg-gray-800 w-72 text-white font-bold py-2 px-4 rounded-md flex justify-center items-center"
+            className="bg-gray-800 w-72 text-white font-bold py-2 px-4 rounded-md"
             onPress={() => {
               // Handle submit action
             }}>

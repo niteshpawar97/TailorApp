@@ -42,6 +42,113 @@ npm run ios
 yarn ios
 ```
 
+```markdown
+# API Request Helper
+`./src/helpers/apiRequestWithHeaders.js`
+This module provides a set of functions for making API requests with headers. It supports common HTTP methods like GET, POST, PUT, and DELETE.
+
+## Installation
+
+To use these functions in your React Native application, follow these steps:
+
+1. Install the required dependencies.
+
+   ```bash
+   yarn add @react-native-async-storage/async-storage
+   ```
+
+2. Import the functions into your application.
+
+   ```javascript
+   import { sendPostRequest, sendGetRequest, sendPutRequest, sendDeleteRequest } from '../helpers/apiRequestWithHeaders';
+   ```
+
+3. Use the functions to make API requests.
+
+## Usage
+
+### Sending a POST Request
+
+```javascript
+const url = 'https://example.com/api/resource';
+const data = { key: 'value' };
+
+const response = await sendPostRequest(url, data);
+console.log('POST Response:', response);
+```
+
+### Sending a GET Request
+
+```javascript
+const url = 'https://example.com/api/resource';
+
+const response = await sendGetRequest(url);
+console.log('GET Response:', response);
+```
+
+### Sending a PUT Request
+
+```javascript
+const url = 'https://example.com/api/resource';
+const data = { key: 'new-value' };
+
+const response = await sendPutRequest(url, data);
+console.log('PUT Response:', response);
+```
+
+### Sending a DELETE Request
+
+```javascript
+const url = 'https://example.com/api/resource';
+
+const response = await sendDeleteRequest(url);
+console.log('DELETE Response:', response);
+```
+
+
+
+
+
+
+
+`structured way following a Model-View-Controller (MVC) pattern in a React Native application`
+
+project/
+|-- src/
+|   |-- components/
+|   |   |-- Splash.js
+|   |   |-- Login.js
+|   |   |-- Dashboard.js
+|   |   |-- Status.js
+|   |   |-- Stock.js
+|   |   |-- Customer.js
+|   |   |-- NewOrder.js
+|   |   |-- History.js
+|   |-- navigation/
+|   |   |-- AppNavigator.js
+|   |   |-- DashboardNavigator.js
+|   |-- controllers/
+|   |   |-- AuthController.js
+|   |-- models/
+|   |   |-- UserModel.js
+|   |-- views/
+|   |   |-- SplashScreen.js
+|   |   |-- LoginScreen.js
+|   |   |-- DashboardScreen.js
+|   |   |-- StatusScreen.js
+|   |   |-- StockScreen.js
+|   |   |-- CustomerScreen.js
+|   |   |-- NewOrderScreen.js
+|   |   |-- HistoryScreen.js
+|   |-- App.js
+|-- package.json
+|-- ...
+
+
+
+
+
+
 If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
 
 This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {View, Image, Text, TextInput, TouchableOpacity} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import {View, Image, Text, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import LoginController from '../controllers/LoginController';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
@@ -36,54 +37,58 @@ const LoginView = () => {
       // Navigate to the DashboardView
       navigation.navigate('Dashboard');
     } catch (error) {
-      // Handle login errors, for example, display an error message to the user.
-      console.error('Login error:', error.message);
       setError(error.message); // Set the error message in state
     }
   };
 
   return (
-    <View className="h-full w-full flex justify-center items-center">
+    <View className="h-full w-full flex-1 flex justify-center items-center">
       <Image
         source={require('../assets/login_bg.jpg')}
         resizeMode="cover"
         className="absolute w-full h-full z-0"
       />
 
-      <View className="bg-yellow-50 rounded-lg shadow-lg p-8 w-4/5">
-        <Text className="text-gray-600 text-2xl text-center font-semibold mt-0 mb-5">
-          Welcome to Login
-        </Text>
-        <TextInput
-          className="placeholder-gray-800 text-placeholder-gray-800 border border-gray-400 rounded-md px-4 py-2 mt-2 w-full"
-          placeholder="Username"
-          onChangeText={text => setUsername(text)}
-          value={username}
-          autoCorrect={false}
-          autoCompleteType="off" // Disable auto-completion
-          autoCapitalize="none" // Turn off auto-capitalization
-        />
-
-        <TextInput
-          className="placeholder-gray-800 text-placeholder-gray-800 border border-gray-400 rounded-md px-4 py-2 mt-6 mb-5 w-full "
-          placeholder="Password"
-          onChangeText={text => setPassword(text)}
-          value={password}
-          secureTextEntry
-        />
-
-        <TouchableOpacity
-          onPress={handleLogin}
-          className="bg-gray-800 font-bold py-2 px-4 rounded-full border border-blue-700">
-          <Text className="text-center text-yellow-200 font-semibold text-xl">
-            LOGIN
+      <View className="flex p-5 w-80 bg-yellow-100 rounded-lg shadow-lg">
+        <View className="flex w-72 flex-col gap-6">
+          <Text className="text-gray-600 text-2xl text-center font-semibold mt-0 mb-5">
+            Welcome to Login
           </Text>
-        </TouchableOpacity>
-        <ErrorPopup
-          isVisible={error !== null}
-          errorMessage={error}
-          onClose={handleCloseError}
-        />
+          <TextInput
+            mode="outlined"
+            label="Phone Number"
+            className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-full"
+            placeholder="Username"
+            onChangeText={text => setUsername(text)}
+            value={username}
+            autoCorrect={false}
+            autoCompleteType="off" // Disable auto-completion
+            autoCapitalize="none" // Turn off auto-capitalization
+          />
+
+          <TextInput
+            mode="outlined"
+            label="Password"
+            className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-full"
+            placeholder="Password"
+            onChangeText={text => setPassword(text)}
+            value={password}
+            secureTextEntry
+          />
+
+          <TouchableOpacity
+            onPress={handleLogin}
+            className="bg-gray-800  w-72 font-bold py-2 px-4 rounded-full border border-blue-700">
+            <Text className="text-center text-yellow-200 font-semibold text-xl">
+              LOGIN
+            </Text>
+          </TouchableOpacity>
+          <ErrorPopup
+            isVisible={error !== null}
+            errorMessage={error}
+            onClose={handleCloseError}
+          />
+        </View>
       </View>
     </View>
   );

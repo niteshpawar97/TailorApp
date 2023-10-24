@@ -10,6 +10,7 @@ const SplashView = ({ navigation }) => {
         // Simulate a 2-second delay
         setTimeout(async () => {
         const userData = await AsyncStorage.getItem('user');
+        console.log(userData);
         if (userData !== null) {
           // User data exists, navigate to DashboardView
           navigation.replace('Dashboard'); // Replace 'Dashboard' with your screen name
