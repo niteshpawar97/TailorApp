@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Card, Title, Paragraph} from 'react-native-paper';
+import {Card, Title} from 'react-native-paper';
 
 function DashboardView() {
   const [user, setUser] = useState(null);
@@ -53,9 +53,7 @@ function DashboardView() {
                 <Text className="text-2xl text-yellow-600 font-semibold">
                   User: {user.username}
                 </Text>
-                <Text className="text-2xl text-yellow-600 font-semibold">
-                  Password: {user.password_hash}
-                </Text>
+                
                 <Text className="text-2xl text-yellow-600 font-semibold">
                   Subscription type: {user.subscription_type}
                 </Text>

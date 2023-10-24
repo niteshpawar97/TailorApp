@@ -4,14 +4,14 @@ import {Appearance} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import SplashScreen from './src/views/SplashScreen';
-import LoginView from './src/views/LoginView';
-import DashboardView from './src/views/DashboardView';
-import StatusScreen from './src/views/StatusScreen';
-import StockScreen from './src/views/StockScreen';
-import CustomerScreen from './src/views/CustomerScreen';
-import NewOrderScreen from './src/views/NewOrderScreen';
-import HistoryScreen from './src/views/HistoryScreen';
+import Splash from './src/views/Splash';
+import Login from './src/views/Login';
+import Dashboard from './src/views/Dashboard';
+import Status from './src/views/Status';
+import Stock from './src/views/Stock';
+import Customer from './src/views/Customer';
+import NewOrder from './src/views/NewOrder';
+import History from './src/views/History';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -23,32 +23,17 @@ const App = () => {
     Appearance.setColorScheme('light');
   }, []);
 
-  // Function to handle user logout
-  const handleLogout = async () => {
-    try {
-      // Clear user data from AsyncStorage
-      await AsyncStorage.removeItem('user');
-      console.log('User data cleared from AsyncStorage.');
-
-      // Navigate to the login or home screen
-      navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-      console.log('Navigated to the Login screen.');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
-
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashScreen">
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
+          name="Splash"
+          component={Splash}
           options={{headerShown: false}}
         />
         <Stack.Screen
           name="Login"
-          component={LoginView}
+          component={Login}
           options={{headerShown: false}}
         />
         <Stack.Screen
@@ -66,7 +51,7 @@ const DashboardNavigator = () => {
     <Tab.Navigator>
       <Tab.Screen
         name="Home"
-        component={DashboardView}
+        component={Dashboard}
         options={({navigation}) => ({
           headerTitle: 'Dashboard',
           headerRight: () => (
@@ -97,8 +82,40 @@ const DashboardNavigator = () => {
       />
 
       <Tab.Screen
+        name="New Order"
+        component={NewOrder}
+        options={({navigation}) => ({
+          headerTitle: 'New Order',
+          headerRight: () => (
+            <MaterialCommunityIcons.Button
+              name="logout"
+              backgroundColor="transparent"
+              color="black"
+              onPress={() => {
+                // Implement your logout logic here
+                try {
+                  // Clear user data from AsyncStorage
+                  AsyncStorage.removeItem('user');
+                  console.log('User data cleared from AsyncStorage.');
+
+                  // Navigate to the login or home screen
+                  navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+                  console.log('Navigated to the Login screen.');
+                } catch (error) {
+                  console.error('Error logging out:', error);
+                }
+              }}
+            />
+          ),
+          tabBarIcon: ({color, size}) => (
+            <MaterialCommunityIcons name="plus-box" color={color} size={size} />
+          ),
+        })}
+      />
+
+      <Tab.Screen
         name="Status"
-        component={StatusScreen}
+        component={Status}
         options={({navigation}) => ({
           headerTitle: 'Status',
           headerRight: () => (
@@ -134,7 +151,7 @@ const DashboardNavigator = () => {
 
       <Tab.Screen
         name="Stock"
-        component={StockScreen}
+        component={Stock}
         options={({navigation}) => ({
           headerTitle: 'Stock',
           headerRight: () => (
@@ -165,7 +182,7 @@ const DashboardNavigator = () => {
       />
       <Tab.Screen
         name="Customers"
-        component={CustomerScreen}
+        component={Customer}
         options={({navigation}) => ({
           headerTitle: 'Customers',
           headerRight: () => (
@@ -201,7 +218,7 @@ const DashboardNavigator = () => {
 
       <Tab.Screen
         name="History"
-        component={HistoryScreen}
+        component={History}
         options={({navigation}) => ({
           headerTitle: 'History',
           headerRight: () => (
@@ -227,38 +244,6 @@ const DashboardNavigator = () => {
           ),
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="history" color={color} size={size} />
-          ),
-        })}
-      />
-
-      <Tab.Screen
-        name="New Order"
-        component={NewOrderScreen}
-        options={({navigation}) => ({
-          headerTitle: 'New Order',
-          headerRight: () => (
-            <MaterialCommunityIcons.Button
-              name="logout"
-              backgroundColor="transparent"
-              color="black"
-              onPress={() => {
-                // Implement your logout logic here
-                try {
-                  // Clear user data from AsyncStorage
-                  AsyncStorage.removeItem('user');
-                  console.log('User data cleared from AsyncStorage.');
-
-                  // Navigate to the login or home screen
-                  navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-                  console.log('Navigated to the Login screen.');
-                } catch (error) {
-                  console.error('Error logging out:', error);
-                }
-              }}
-            />
-          ),
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons name="plus-box" color={color} size={size} />
           ),
         })}
       />

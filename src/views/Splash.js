@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { View, Image, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SplashScreen = ({ navigation }) => {
+const SplashView = ({ navigation }) => {
   useEffect(() => {
     const checkUserData = async () => {
       try {
@@ -17,7 +17,7 @@ const SplashScreen = ({ navigation }) => {
         } else {
           // User data doesn't exist, navigate to LoginView
           navigation.replace('Login'); // Replace 'Login' with your screen name
-        console.log('LoginScreen Show : user not exits');
+        console.log('Login Show : user not exits');
       }
     }, 2000); // 2000 milliseconds = 2 seconds
       } catch (error) {
@@ -47,4 +47,4 @@ const SplashScreen = ({ navigation }) => {
   );
 };
 
-export default SplashScreen;
+export default SplashView;
