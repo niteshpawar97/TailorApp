@@ -112,7 +112,7 @@ console.log('DELETE Response:', response);
 
 
 `structured way following a Model-View-Controller (MVC) pattern in a React Native application`
-
+```javascript
 project/
 |-- src/
 |   |-- components/
@@ -144,7 +144,7 @@ project/
 |-- package.json
 |-- ...
 
-
+```
 
 
 
