@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Splash from '../views/Splash';
@@ -16,39 +16,39 @@ const Tab = createBottomTabNavigator();
 const AppNavigator = {
   DashboardNavigator: () => {
     return (
-        <Tab.Navigator>
+      <Tab.Navigator>
         <Tab.Screen
           name="Home"
           component={Dashboard}
           options={({navigation}) => ({
             headerTitle: 'TailorApp',
             headerRight: () => (
-              <MaterialCommunityIcons.Button
-                name="logout"
-                backgroundColor="transparent"
-                color="black"
-                onPress={() => {
-                  // Implement your logout logic here
-                  try {
-                    // Clear user data from AsyncStorage
-                    AsyncStorage.removeItem('user');
-                    console.log('User data cleared from AsyncStorage.');
-  
-                    // Navigate to the login or home screen
-                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-                    console.log('Navigated to the Login screen.');
-                  } catch (error) {
-                    console.error('Error logging out:', error);
-                  }
-                }}
-              />
+                <MaterialCommunityIcons.Button
+                  name="logout"
+                  backgroundColor="transparent"
+                  color="black"
+                  onPress={async () => {
+                    // Implement your logout logic here
+                    try {
+                      // Clear user data from AsyncStorage
+                      AsyncStorage.removeItem('user');
+                      console.log('User data cleared from AsyncStorage.');
+
+                      // Navigate to the login or home screen
+                      navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+                      console.log('Navigated to the Login screen.');
+                    } catch (error) {
+                      console.error('Error logging out:', error);
+                    }
+                  }}
+                />
             ),
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="home" color={color} size={size} />
             ),
           })}
         />
-  
+
         <Tab.Screen
           name="New Order"
           component={NewOrder}
@@ -76,7 +76,7 @@ const AppNavigator = {
                     // Clear user data from AsyncStorage
                     AsyncStorage.removeItem('user');
                     console.log('User data cleared from AsyncStorage.');
-  
+
                     // Navigate to the login or home screen
                     navigation.navigate('Login'); // Replace 'Login' with your actual screen name
                     console.log('Navigated to the Login screen.');
@@ -87,11 +87,15 @@ const AppNavigator = {
               />
             ),
             tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="plus-box" color={color} size={size} />
+              <MaterialCommunityIcons
+                name="plus-box"
+                color={color}
+                size={size}
+              />
             ),
           })}
         />
-  
+
         <Tab.Screen
           name="Status"
           component={Status}
@@ -119,7 +123,7 @@ const AppNavigator = {
                     // Clear user data from AsyncStorage
                     AsyncStorage.removeItem('user');
                     console.log('User data cleared from AsyncStorage.');
-  
+
                     // Navigate to the login or home screen
                     navigation.navigate('Login'); // Replace 'Login' with your actual screen name
                     console.log('Navigated to the Login screen.');
@@ -138,7 +142,7 @@ const AppNavigator = {
             ),
           })}
         />
-  
+
         <Tab.Screen
           name="Stock"
           component={Stock}
@@ -166,7 +170,7 @@ const AppNavigator = {
                     // Clear user data from AsyncStorage
                     AsyncStorage.removeItem('user');
                     console.log('User data cleared from AsyncStorage.');
-  
+
                     // Navigate to the login or home screen
                     navigation.navigate('Login'); // Replace 'Login' with your actual screen name
                     console.log('Navigated to the Login screen.');
@@ -208,7 +212,7 @@ const AppNavigator = {
                     // Clear user data from AsyncStorage
                     AsyncStorage.removeItem('user');
                     console.log('User data cleared from AsyncStorage.');
-  
+
                     // Navigate to the login or home screen
                     navigation.navigate('Login'); // Replace 'Login' with your actual screen name
                     console.log('Navigated to the Login screen.');
@@ -227,7 +231,7 @@ const AppNavigator = {
             ),
           })}
         />
-  
+
         <Tab.Screen
           name="History"
           component={History}
@@ -255,7 +259,7 @@ const AppNavigator = {
                     // Clear user data from AsyncStorage
                     AsyncStorage.removeItem('user');
                     console.log('User data cleared from AsyncStorage.');
-  
+
                     // Navigate to the login or home screen
                     navigation.navigate('Login'); // Replace 'Login' with your actual screen name
                     console.log('Navigated to the Login screen.');
@@ -266,7 +270,11 @@ const AppNavigator = {
               />
             ),
             tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="history" color={color} size={size} />
+              <MaterialCommunityIcons
+                name="history"
+                color={color}
+                size={size}
+              />
             ),
           })}
         />

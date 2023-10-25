@@ -184,3 +184,30 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+  const handleNext = async () => {
+    // Check if any of the required fields are empty
+    if (!phone || !whatsapp || !name) {
+      setError('Please fill in all required fields');
+      return;
+    }
+    // Prepare your data
+    const data = {
+      phone,
+      whatsapp,
+      name,
+    };
+    // Make the POST request
+    //console.log('Response:', CUSTOMER_CREATE);
+    try {
+      const response = await sendPostRequest(CUSTOMER_CREATE, data);
+      // Handle the response as needed
+      console.log('Response:', response);
+      // When the "NEXT" button is pressed, toggle the visibility of next step fields.
+      
+    } catch (error) {
+      // Handle errors
+      setError('Error:', error);
+    }
+  };

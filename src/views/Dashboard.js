@@ -17,7 +17,7 @@ function DashboardView() {
           // User details found in AsyncStorage; parse the JSON data
           const parsedUser = JSON.parse(userData);
           setUser(parsedUser);
-          console.log(parsedUser.username, ': login success');
+          //console.log(parsedUser.username, ': login success');
         }
       } catch (error) {
         console.error('Error retrieving user details:', error);
@@ -28,42 +28,30 @@ function DashboardView() {
     fetchUserDetails();
   }, []);
 
-  // Function to handle user logout
-  const handleLogout = async () => {
-    try {
-      // Clear user data from AsyncStorage
-      await AsyncStorage.removeItem('user');
-      console.log('User data cleared from AsyncStorage.');
-
-      // Navigate to the login or home screen
-      navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-      console.log('Navigated to the Login screen.');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
-
   return (
     <ScrollView>
-      <View className="flex-1 flex-col">
+      <View className="flex-1 flex-col gap-2">
         <View className="flex-1 flex justify-between">
-          <View className="flex-1 bg-gray-300 p-4">
+          <View className="flex-1 p-4 bg-stone-400">
+          {/* <Image
+        source={require('../assets/bg.jpg')}
+        resizeMode="cover"
+        className="absolute w-full h-full"
+      /> */}
             {user && (
               <>
-                <Text className="text-2xl text-yellow-600 font-semibold">
+              <Card className="bg-gray-200 p-2 mb-2"><Text className="text-2xl text-lime-600 font-semibold">
                   User: {user.username}
-                </Text>
+                </Text></Card>
                 
-                <Text className="text-2xl text-yellow-600 font-semibold">
+                
+                {/* <Text className="text-2xl text-yellow-600 font-semibold">
                   Subscription type: {user.subscription_type}
-                </Text>
+                </Text> */}
               </>
             )}
-            <Text className="mt-4 text-xl font-extrabold text-gray-800">
-              Welcome to the TailorApp!
-            </Text>
 
-            <View className="flex flex-col">
+            <View className="flex flex-col gap-2">
               
               <Card className="h-32 bg-gray-200 mt-2">
                 <View className="relative">
@@ -124,7 +112,7 @@ function DashboardView() {
                 </View>
               </Card>
 
-              <Text className="h-52 text-xl pl-5 pt-3 text-gray-700 bg-gray-100 mt-2 border border-red-400 rounded-lg"> 
+              <Text className="h-52 text-xl pl-5 pt-3 text-gray-700 bg-gray-200 mt-2 border border-red-400 rounded-lg"> 
               Recent Orders | Today 
               </Text>
 
