@@ -7,8 +7,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from 'react-native';
-import {TextInput, RadioButton} from 'react-native-paper';
+import {TextInput, IconButton, Button, RadioButton} from 'react-native-paper';
 import Config from '../api/Config';
 import {
   sendPostRequest,
@@ -19,6 +20,7 @@ import {
 import ErrorPopup from '../components/ErrorPopup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const {CUSTOMER_SEARCH, CUSTOMER_CREATE} = Config;
 
@@ -35,8 +37,10 @@ const NewOrderView = () => {
 
   const [quantity, setQuantity] = useState('');
   const [paidamt, setPaidAmt] = useState('');
+  const [discount, setDiscount] = useState('');
 
   const [material, setMaterial] = React.useState('readyMade');
+  const [paymode, setPaymode] = React.useState('readyMade');
   const [open, setOpen] = useState(false);
   const [readymade, setReadymade] = useState(null);
   const [readymadeitems, setReadymadeItems] = useState([
@@ -48,6 +52,28 @@ const NewOrderView = () => {
   const [opensize, setOpenSize] = useState(false);
   const [size, setsize] = useState(null);
   const [sizes, setSizes] = useState([{label: 'Free Size', value: 'freesize'}]);
+
+  const [deliveryDate, setDeliveryDate] = useState(''); // State variable for selected delivery date
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleDateConfirm = date => {
+    // Format the date if needed
+    const formattedDate = date.toISOString().split('T')[0]; // Example formatting
+
+    // Update the state with the selected delivery date
+    setDeliveryDate(formattedDate);
+
+    // Close the date picker modal
+    hideDatePicker();
+  };
 
   useEffect(() => {
     if (phone.length >= 4) {
@@ -155,18 +181,24 @@ const NewOrderView = () => {
   };
 
   return (
-    <View className="flex-1 flex justify items-center">
-      <Image
+    <View className="flex-1 flex justify items-center bg-gray-200 w-full">
+      {/* <Image
         source={require('../assets/bg.jpg')}
         resizeMode="cover"
         className="absolute w-full h-full"
-      />
-      <View className="flex py-10 px-20 w-full justify-center items-center bg-gray-200 rounded-lg shadow-lg">
+      /> */}
+
+      <View className="flex-1 w-full justify-center items-center rounded-lg shadow-sm ">
         <Text className="text-xl text-center font-semibold pb-5 text-gray-900">
           Order Details (Step {currentStep}/3)
         </Text>
 
-        <View className="flex w-72 flex-col gap-6">
+        <View
+          className={
+            currentStep === 3
+              ? 'flex w-full flex-col gap-6'
+              : 'flex w-72 flex-col gap-6'
+          }>
           {currentStep === 1 && (
             <TextInput
               mode="outlined"
@@ -299,18 +331,141 @@ const NewOrderView = () => {
           )}
 
           {currentStep === 3 && (
-            // Render step 3 fields
-            <View>
-              <TextInput
-                mode="outlined"
-                label="Paid Amount"
-                className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-full"
-                // Add the onChangeText and value for step 3
-                onChangeText={text => setPaidAmt(text)}
-                value={paidamt}
-              />
-              {/* Add more step 3 fields */}
-            </View>
+            // Items Show added
+            <ScrollView>
+              <View className="px-6 py-2 w-full rounded-md bg-blue-400">
+                <Text className="text-lg text-lime-300 font-bold">
+                  Order Confirmation
+                </Text>
+
+                <View className="flex flex-row justify-between my-2 bg-blue-50 py-3 px-3">
+                  <Text className="w-1/2  text-gray-950 font-extrabold">
+                    Item
+                  </Text>
+                  <Text className="w-1/8  text-gray-950 font-extrabold">
+                    Quantity
+                  </Text>
+                  <Text className="w-1/8  text-gray-950 font-extrabold">
+                    Meter
+                  </Text>
+                  <Text className="w-1/8  text-gray-950 font-extrabold">
+                    Stitch
+                  </Text>
+                  <Text className="w-1/6  text-gray-950 font-extrabold">
+                    Material/Items QAR
+                  </Text>
+                  <Text className="w-1/6  text-gray-950 font-extrabold">
+                    Amount
+                  </Text>
+                </View>
+
+                {/* Invoice items */}
+                <View className="flex flex-row justify-between my-2 bg-blue-200 py-2 px-2 ">
+                  <Text className="w-1/2 text-zinc-700 font-semibold">
+                    Coat suit
+                  </Text>
+                  <Text className="w-1/8 text-zinc-700 font-semibold">1</Text>
+                  <Text className="w-1/8 text-zinc-700 font-semibold">0</Text>
+                  <Text className="w-1/8 text-zinc-700 font-semibold">0</Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    10 QAR
+                  </Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    QAR 10
+                  </Text>
+                </View>
+
+                <View className="flex flex-row justify-between my-2 bg-blue-200 py-2 px-2 ">
+                  <Text className="w-1/2 text-zinc-700 font-semibold">
+                    SHIRTS
+                  </Text>
+                  <Text className="w-1/8 text-zinc-700 font-semibold">1</Text>
+                  <Text className="w-1/8 text-zinc-700 font-semibold">3</Text>
+                  <Text className="w-1/8 text-zinc-700 font-semibold">10</Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    30 QAR
+                  </Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    QAR 40
+                  </Text>
+                </View>
+
+                <View className="row justify-end items-end">
+                  <View className="flex-row w-72">
+                    <TextInput
+                      mode="outlined"
+                      label="Pick Delivery Date"
+                      placeholder="Select a date"
+                      value={deliveryDate} // Display the selected date
+                      onTouchStart={showDatePicker} // Show the date picker when the input is touched
+                      className="flex-1"
+                      available
+                      space
+                    />
+                    <IconButton
+                      icon="calendar"
+                      color="#000"
+                      size={25}
+                      onPress={showDatePicker}
+                    />
+                  </View>
+                  <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date" // You can change this to "datetime" for date and time
+                    onConfirm={handleDateConfirm}
+                    onCancel={hideDatePicker}
+                  />
+
+                  {/* Total and Discount */}
+                  <View className="my-2">
+                    <Text className="text-gray-600 text-lg font-extrabold">
+                      Total: QAR 50
+                    </Text>
+
+                    <TextInput
+                      mode="outlined"
+                      label="Discount"
+                      className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-40"
+                      // Add the onChangeText and value for step 3
+                      onChangeText={text => setDiscount(text)}
+                      value={discount}
+                      keyboardType="phone-pad"
+                    />
+                  </View>
+
+                  <RadioButton.Group
+                    onValueChange={value => setPaymode(value)}
+                    value={paymode}>
+                    <View className="flex flex-cal w-32 justify-between text-gray-950">
+                      <RadioButton.Item
+                        position="leading"
+                        label="Card"
+                        value="card"
+                      />
+                      <RadioButton.Item
+                        position="leading"
+                        label="Cash"
+                        value="cash"
+                      />
+                    </View>
+                  </RadioButton.Group>
+
+                  <Text className="text-gray-800 text-lg font-extrabold">
+                    Pay Total: QAR 50
+                  </Text>
+
+                  <TextInput
+                    mode="outlined"
+                    label="Paid Balance"
+                    className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-40"
+                    // Add the onChangeText and value for step 3
+                    onChangeText={text => setPaidAmt(text)}
+                    value={paidamt}
+                    keyboardType="phone-pad"
+                  />
+                </View>
+              </View>
+            </ScrollView>
           )}
 
           <View className="flex flex-row justify-between">
@@ -346,13 +501,5 @@ const NewOrderView = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default NewOrderView;
