@@ -8,7 +8,7 @@ const setHeaders = async () => {
   if (user && user.accesstoken) {
     return {
       Authorization: `${user.accesstoken}`,
-      store_id: `${user.store_id}`
+      Store_id: `${user.store_id}`
     };
   }
   return {};

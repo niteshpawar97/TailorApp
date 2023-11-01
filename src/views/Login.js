@@ -56,7 +56,7 @@ const LoginView = () => {
           </Text>
           <TextInput
             mode="outlined"
-            label="Phone Number"
+            label="Username"
             className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-full"
             placeholder="Username"
             onChangeText={text => setUsername(text)}

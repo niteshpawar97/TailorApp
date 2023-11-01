@@ -12,6 +12,7 @@
   "dependencies": {
     "@material-tailwind/react": "^2.1.4",
     "@react-native-async-storage/async-storage": "^1.19.3",
+    "@react-native-community/datetimepicker": "^7.6.1",
     "@react-native-community/viewpager": "^5.0.11",
     "@react-navigation/bottom-tabs": "^6.5.10",
     "@react-navigation/native": "^6.1.9",
