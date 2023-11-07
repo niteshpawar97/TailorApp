@@ -10,12 +10,13 @@ import Stock from '../views/Stock';
 import Customer from '../views/Customer';
 import NewOrder from '../views/NewOrder';
 import History from '../views/History';
-
+import { KeyboardAvoidingView, Platform } from 'react-native'; // Import KeyboardAvoidingView
 const Tab = createBottomTabNavigator();
 
 const AppNavigator = {
   DashboardNavigator: () => {
     return (
+      
       <Tab.Navigator>
         <Tab.Screen
           name="Home"

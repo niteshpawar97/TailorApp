@@ -4,11 +4,11 @@ const setHeaders = async () => {
   // Get the user data from AsyncStorage
   const userData = await AsyncStorage.getItem('user');
   const user = JSON.parse(userData);
-
-  if (user && user.accesstoken) {
+  
+  if (user && user.token) {
     return {
-      Authorization: `${user.accesstoken}`,
-      Store_id: `${user.store_id}`
+      Cookie: `token=${user.token}`
+      // Store_id: `${user.store_id}`
     };
   }
   return {};
@@ -39,8 +39,10 @@ const sendPostRequest = async (url, data) => {
 const sendGetRequest = async (url) => {
   try {
     const headers = await setHeaders();
+    console.log('Headers:', headers);
 
     const response = await fetch(url, {
+
       method: 'GET',
       headers: headers,
     });

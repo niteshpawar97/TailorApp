@@ -3,12 +3,41 @@ import {View, Text, ScrollView, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Card, Title} from 'react-native-paper';
+import LoginController from '../controllers/LoginController'; // Import the checkLoginStatus function
+import ErrorPopup from '../components/ErrorPopup';
 
 function DashboardView() {
   const [user, setUser] = useState(null);
   const navigation = useNavigation();
+  const [error, setError] = useState(null); // State to track errors
+
+  const handleCloseError = () => {
+    setError(null); // Clear the error message
+  };
 
   useEffect(() => {
+  // Function to check the login status
+  const checkUserLoginStatus = async () => {
+    try {
+      const userData = await LoginController.checkLoginStatus(); // Use the checkLoginStatus function
+      if (userData.error) {
+        // Handle the case where the user is not logged in
+        // You can redirect to the login screen or perform other actions here
+        const logoutResponse = await LoginController.logout();
+        // Redirect to the login screen here
+          // You can use navigation or any other method to navigate to the login screen
+          navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+        
+        console.log('Logout Response: ', logoutResponse);
+      } else {
+        // User is logged in; set the user data to the state
+        setUser(userData);
+      }
+    } catch (error) {
+      setError(error.message); // Set the error message in state
+    }
+  };
+
     // Function to fetch the user details from AsyncStorage
     const fetchUserDetails = async () => {
       try {
@@ -18,12 +47,15 @@ function DashboardView() {
           const parsedUser = JSON.parse(userData);
           setUser(parsedUser);
           //console.log(parsedUser.username, ': login success');
+          // console.log(parsedUser.token);
         }
       } catch (error) {
         console.error('Error retrieving user details:', error);
       }
     };
 
+    // Call the function to check login status when the component mounts
+    checkUserLoginStatus();
     // Call the function to fetch user details when the component mounts
     fetchUserDetails();
   }, []);
@@ -33,18 +65,19 @@ function DashboardView() {
       <View className="flex-1 flex-col gap-2">
         <View className="flex-1 flex justify-between">
           <View className="flex-1 p-4 bg-stone-400">
-          {/* <Image
+            {/* <Image
         source={require('../assets/bg.jpg')}
         resizeMode="cover"
         className="absolute w-full h-full"
       /> */}
             {user && (
               <>
-              <Card className="bg-gray-200 p-2 mb-2"><Text className="text-2xl text-lime-600 font-semibold">
-                  User: {user.username}
-                </Text></Card>
-                
-                
+                <Card className="bg-gray-200 p-2 mb-2">
+                  <Text className="text-2xl text-lime-600 font-semibold">
+                    User: {user.uname}
+                  </Text>
+                </Card>
+
                 {/* <Text className="text-2xl text-yellow-600 font-semibold">
                   Subscription type: {user.subscription_type}
                 </Text> */}
@@ -52,7 +85,6 @@ function DashboardView() {
             )}
 
             <View className="flex flex-col gap-2">
-              
               <Card className="h-32 bg-gray-200 mt-2">
                 <View className="relative">
                   <View className="absolute top-0 right-0">
@@ -112,14 +144,21 @@ function DashboardView() {
                 </View>
               </Card>
 
-              <Text className="h-52 text-xl pl-5 pt-3 text-gray-700 bg-gray-200 mt-2 border border-red-400 rounded-lg"> 
-              Recent Orders | Today 
+              <Text className="h-52 text-xl pl-5 pt-3 text-gray-700 bg-gray-200 mt-2 border border-red-400 rounded-lg">
+                Recent Orders | Today
               </Text>
-
-
             </View>
+
+            <ErrorPopup
+          isVisible={error !== null}
+          errorMessage={error}
+          onClose={handleCloseError}
+        />
+
           </View>
         </View>
+
+        
       </View>
     </ScrollView>
   );

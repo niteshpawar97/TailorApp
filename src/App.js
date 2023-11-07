@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, KeyboardAvoidingView, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppNavigator from './navigation/AppNavigator';
@@ -13,6 +13,11 @@ const App = () => {
   }, []);
 
   return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : null}
+  >
+
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
@@ -32,6 +37,7 @@ const App = () => {
         />
       </Stack.Navigator>
     </NavigationContainer>
+    </KeyboardAvoidingView>
   );
 };
 
