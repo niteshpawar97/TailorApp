@@ -6,16 +6,16 @@ import RNPrint from 'react-native-print';
 import { Text, View, TouchableOpacity } from 'react-native';
 
 
-export default function PDFGenerator({ selectedItems }) {
-  const name = 'Rajesh Kumar';
+export default function PDFGenerator({ selectedItems, customer, billing }) {
+  const name = customer.name;
   const Address = 'Default Address';
   const Mobile_No = '1234567890';
-  const Product = 'Shirt';
-  const Quantity = 5; // You can set the default quantity here
-  const Total = 100; // You can set the default total amount here
-  const ReceivedBalance = 50; // You can set the default received balance here
-  const RemainingBalance = 50; // You can set the default remaining balance here
-  const PaymentType = 'Cash'; // You can set the default payment type here
+  
+  const Total = billing.paytotal; 
+  const discount = billing.discount; 
+  const paidmode = billing.paidmode; 
+  const paid = billing.paid; 
+  const balance = billing.balance; 
   const Invoice = 'IVC00123'; // You can set the default payment type here
 
 
@@ -28,11 +28,12 @@ export default function PDFGenerator({ selectedItems }) {
     .map((item, index) => `
       <tr style="background-color: rgba(246, 221, 178, 0.8);">
           <td style="text-align: center;height: 30px;">${index + 1}</td>
-          <td style="text-align: center;height: 30px;">${item.product}</td>
-          <td style="text-align: center;height: 30px;">${(Total / Quantity).toFixed(2)}</td>
+          <td style="text-align: center;height: 30px;">${item.dress_name}</td>
+          <td style="text-align: center;height: 30px;">${item.dress_type}</td>
+          <td style="text-align: center;height: 30px;">${item.size}</td>
           <td style="text-align: center;height: 30px;">${item.quantity}</td>
-          <td style="text-align: center;height: 30px;">${item.quantity}</td>
-          <td style="text-align: center;height: 30px;">₹ ${Total}</td>
+          <td style="text-align: center;height: 30px;">${item.price}</td>
+          <td style="text-align: center;height: 30px;">₹ ${item.total}</td>
       </tr>
     `)
     .join('');
@@ -120,9 +121,10 @@ export default function PDFGenerator({ selectedItems }) {
               <tr style="background-color: rgba(255, 0, 62, 0.8); color: white;">
                   <th style="height: 30px;">#</th>
                   <th style="height: 30px;">Item Name</th>
-                  <th style="height: 30px;">Meter</th>
-                  <th style="height: 30px;">Stitch Rate<br>QAR</th>
-                  <th style="height: 30px;">Metrial Rate<br>QAR</th>
+                  <th style="height: 30px;">Type</th>
+                  <th style="height: 30px;">Size</th>
+                  <th style="height: 30px;">Qty</th>
+                  <th style="height: 30px;">Price</th>
                   <th style="height: 30px;">Total<br>Amount</th>
               </tr>
               <!-- Item	Quantity	Meter	Stitch QAR	Metrial QAR	Amount -->
@@ -139,16 +141,16 @@ export default function PDFGenerator({ selectedItems }) {
                 </tr>
                           <tr style="border-bottom: solid ;">
                               <th style="text-align: start;">Received Balance : </th>
-                              <td style="text-align: center;height: 30px;">₹ ${ReceivedBalance}</td>
+                              <td style="text-align: center;height: 30px;">₹ ${paid}</td>
                           </tr>
                          
                           <tr style="border-bottom: solid ;">
                           <th style="text-align: start;">Remaining Balance : </th>
-                          <td style="text-align: center;height: 30px;">₹ ${RemainingBalance}</td>
+                          <td style="text-align: center;height: 30px;">₹ ${balance}</td>
                       </tr>
                           <tr>
                               <th style="text-align: start;">Payment Method: </th>
-                              <td style="text-align: center;height: 30px;">${PaymentType}</td>
+                              <td style="text-align: center;height: 30px;">${paidmode}</td>
                           </tr>
                     </table>
                 </div>

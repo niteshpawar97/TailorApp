@@ -24,13 +24,14 @@ const USER_CHECK_API = `${API_BASE_URL}/user`; // Example login API
 
 ///api/client/customers?q=search&m=1234
 const CUSTOMER_SEARCH = `${BASE_CLIENT_API}/customers`; // Example login API 
-const CUSTOMER_CREATE = `${BASE_CLIENT_API}/create`; // Example CUSTOMER_CREATE API 
+const ORDER_CREATE_API = `${BASE_CLIENT_API}/order`; // Example ORDER_CREATE_API 
 const ALL_PRODUCT_API = `${BASE_CLIENT_API}/allproducts`; // Example login API 
 
 // http://64.226.115.230:3000/api/client/allproducts
 
 export default {
   LOGIN_API, LOGOUT_API, USER_CHECK_API,
-  CUSTOMER_SEARCH, CUSTOMER_CREATE,
+  CUSTOMER_SEARCH, ORDER_CREATE_API,
   ALL_PRODUCT_API,
+
 };

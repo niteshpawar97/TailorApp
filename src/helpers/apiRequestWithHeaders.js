@@ -40,7 +40,7 @@ const sendGetRequest = async (url) => {
   try {
     const headers = await setHeaders();
     console.log('Headers:', headers);
-
+    console.log('Url:', url);
     const response = await fetch(url, {
 
       method: 'GET',
