@@ -1,15 +1,37 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
-import { Appearance, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Appearance, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppNavigator from './navigation/AppNavigator';
+import NetInfo from '@react-native-community/netinfo';
+import InternetStatus from './components/InternetStatus'; // Adjust the path
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+  const [isConnected, setIsConnected] = useState(true);
+
   useEffect(() => {
     Appearance.setColorScheme('light');
+
+    const unsubscribe = NetInfo.addEventListener(state => {
+      const { isConnected: newIsConnected } = state;
+
+      // Log messages for debugging
+      if (newIsConnected) {
+        console.log('Connected to the Internet');
+      } else {
+        console.log('No Internet Connection');
+      }
+
+      setIsConnected(newIsConnected);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+
   }, []);
 
   return (
@@ -37,6 +59,10 @@ const App = () => {
         />
       </Stack.Navigator>
     </NavigationContainer>
+
+    {/* Internet connection status with custom styles */}
+    <InternetStatus isConnected={isConnected} />
+
     </KeyboardAvoidingView>
   );
 };

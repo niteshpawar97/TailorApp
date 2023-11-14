@@ -1,42 +1,49 @@
-// src/components/PDFGenerator.js
+// src/components/InvoicePrint.js
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import RNPrint from 'react-native-print';
 
-import { Text, View, TouchableOpacity } from 'react-native';
+import {Text, View, TouchableOpacity} from 'react-native';
 
+export default function InvoicePrint({invoiceDetails}) {
+  useEffect(() => {
+    // Call the print function when the component mounts
+    printHTML();
+  }, []); // Empty dependency array ensures the effect runs only once
 
-export default function PDFGenerator({ selectedItems, customer, billing }) {
-  const name = customer.name;
-  const Address = 'Default Address';
-  const Mobile_No = '1234567890';
-  
-  const Total = billing.paytotal; 
-  const discount = billing.discount; 
-  const paidmode = billing.paidmode; 
-  const paid = billing.paid; 
-  const balance = billing.balance; 
-  const Invoice = 'IVC00123'; // You can set the default payment type here
+  // Parse details
+  const customer = JSON.parse(invoiceDetails.customer_details);
+  const billing = JSON.parse(invoiceDetails.billing_details);
+  const selectedItems = JSON.parse(invoiceDetails.products_details);
 
+  // Extracting order details
+  const orderId = invoiceDetails.order_id;
+  const orderStatus = invoiceDetails.order_status;
+  const orderDate = new Date(invoiceDetails.order_date).toLocaleDateString();
+  const deliveryDate = new Date(
+    invoiceDetails.delivery_date,
+  ).toLocaleDateString();
+  const deliveryStatus = invoiceDetails.delivery_status;
 
-//   <View className="flex flex-row justify-start p-5">
-//   <Text className="text-red-500">
-//     PDFGenerator component :
-//   </Text>
-//   <PDFGenerator
-//     selectedItems={selectedItems}
-//     customer={customer}
-//     billing={billing}
-//   />
-// </View>
+  console.log('Customer:', customer);
+  console.log('Billing:', billing);
+  console.log('Selected Items:', selectedItems);
+  console.log('Order ID:', orderId);
+  console.log('Order Status:', orderStatus);
+  console.log('Order Date:', orderDate);
+  console.log('Delivery Date:', deliveryDate);
+  console.log('Delivery Status:', deliveryStatus);
+
+  //console.warn('invoiceDetails : ', invoiceDetails);
+  //   console.log('billing : ', billing);
+  //   console.log('selectedItems : ', selectedItems);
 
   const printHTML = async () => {
+    // Your HTML content goes here
 
-  // Your HTML content goes here
-  // You can use the selectedItems prop to dynamically generate the table rows
-
-  const selectedItemsHTML = selectedItems
-    .map((item, index) => `
+    const selectedItemsHTML = selectedItems
+      .map(
+        (item, index) => `
       <tr style="background-color: rgba(246, 221, 178, 0.8);">
           <td style="text-align: center;height: 30px;">${index + 1}</td>
           <td style="text-align: center;height: 30px;">${item.dress_name}</td>
@@ -46,8 +53,9 @@ export default function PDFGenerator({ selectedItems, customer, billing }) {
           <td style="text-align: center;height: 30px;">${item.price}</td>
           <td style="text-align: center;height: 30px;">₹ ${item.total}</td>
       </tr>
-    `)
-    .join('');
+    `,
+      )
+      .join('');
 
     const htmlContent = `<html>
     <head>
@@ -108,16 +116,18 @@ export default function PDFGenerator({ selectedItems, customer, billing }) {
               ">
                   <p class="invoice-user">
                       Bill To : <br/>
-                      Name : ${name} <br/>
-                      Address : ${Address} <br/>
-                      Phone No : +91 ${Mobile_No}
+                      Name : ${customer.name} <br/>
+                      <!-- Address : Address <br/> -->
+                    Mobile No : +91 ${customer.mobile} <br/>
+                    Whatsapp No : +91 ${customer.whatsapp}
                   </p>
               </div>
               <div style="align-items: flex-end;">
-                  <p>Invoice No : ${Invoice}<br/>
-                  Date : 28-10-2023<br/>
-                  Time :11:30 AM</p>
-                  ---- TEST -----</p>
+                  <p>Order No : ${orderId}<br/>
+                  Order Date: : ${orderDate}<br/>
+                  Delivery Date: ${deliveryDate}<br/>
+                  Delivery Status:  ${deliveryStatus}<br/>
+                  </p>--ORIGNAL--</p>
                   <br/>
               </div>
           </div>
@@ -148,20 +158,25 @@ export default function PDFGenerator({ selectedItems, customer, billing }) {
                     <table style="width: 50%; align-self: flex-end;">
                     <tr>
                     <th style="text-align: start;">Grand Total : </th>
-                    <td style="text-align: center;height: 30px;">₹ ${Total}</td>
+                    <td style="text-align: center;height: 30px;">₹ ${billing.total}</td>
                 </tr>
+                <tr style="border-bottom: solid ;">
+                              <th style="text-align: start;">Discount : </th>
+                              <td style="text-align: center;height: 30px;">₹ ${billing.discount}</td>
+                          </tr>
+                          
                           <tr style="border-bottom: solid ;">
                               <th style="text-align: start;">Received Balance : </th>
-                              <td style="text-align: center;height: 30px;">₹ ${paid}</td>
+                              <td style="text-align: center;height: 30px;">₹ ${billing.paid}</td>
                           </tr>
                          
                           <tr style="border-bottom: solid ;">
                           <th style="text-align: start;">Remaining Balance : </th>
-                          <td style="text-align: center;height: 30px;">₹ ${balance}</td>
+                          <td style="text-align: center;height: 30px;">₹ ${billing.balance}</td>
                       </tr>
                           <tr>
                               <th style="text-align: start;">Payment Method: </th>
-                              <td style="text-align: center;height: 30px;">${paidmode}</td>
+                              <td style="text-align: center;height: 30px;">${billing.paidmode}</td>
                           </tr>
                     </table>
                 </div>
@@ -181,26 +196,10 @@ export default function PDFGenerator({ selectedItems, customer, billing }) {
       </div>
     </body>
   </html>`;
-  await RNPrint.print({
-    html: htmlContent,
-  });
-};
+    await RNPrint.print({
+      html: htmlContent,
+    });
+  };
 
-return (
-    <View>
-      <TouchableOpacity
-        style={{
-          backgroundColor: 'blue',
-          borderRadius: 4,
-          paddingVertical: 8,
-          paddingHorizontal: 16,
-        }}
-        onPress={printHTML}
-      >
-        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>
-          Print Invoice
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
+  return <View></View>;
 }

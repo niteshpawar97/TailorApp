@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TailorApp API Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-700 p-8">
+    <div class="max-w-3xl mx-auto">
+        <header class="mb-4 text-center">
+            <h1 class="text-3xl font-semibold text-gray-800">TailorApp API Documentation</h1>
+        </header>
+
+        <main class="rounded-lg bg-gray-400 p-4 shadow-lg">
+            
+            
+  <h3 class="text-2xl font-extralight mb-5 text-red-800">LOGIN_API, LOGOUT_API, USER_CHECK_API,
+    CUSTOMER_SEARCH, CUSTOMER_LIST_API,
+    ORDER_CREATE_API, ORDER_HISTORY_API, ORDER_DETAILS_API,
+    ALL_PRODUCT_API,</h3>
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-2">Orderhistory</h2>
+                <p class="mb-2">Before using any of the endpoints, you need to authenticate. You can do this by sending
+                    a GET request <code>/api/client/orderhistory
+                    </code> with the following JSON Response:</p>
+                <pre class="bg-gray-500 p-2 rounded-md whitespace-pre-wrap overflow-auto">
+                    <code>{
+                        "error": false,
+                        "message": "Order History.",
+                        "data": [{
+                            "order_id": 42,
+                            "name": "Aman",
+                            "mobile": "\"12347654567\"",
+                            "balance": "500",
+                            "order_status": "Success",
+                            "order_date": "2023-11-11",
+                            "delivery_date": "2023-11-11",
+                            "delivery_status": "UnDelivered"
+                        },
+                        {
+                            "order_id": 1,
+                            "name": null,
+                            "mobile": null,
+                            "balance": null,
+                            "order_status": "Success",
+                            "order_date": "2023-11-04",
+                            "delivery_date": "2023-11-04",
+                            "delivery_status": "UnDelivered"
+                        }]
+                    }</code></pre>
+                <p class="mb-2">Headers:
+                    <code>Cookie: token=$2a$10$w69QrbMZ8EoQpHcM1TsRY.hTKRGnUbKal3o4N4Ku.n9.RwbCYTki6</code></p>
+                <p class="mb-2">Endpoint: <code>/api/client/orderhistory</code></p>
+                <p class="mb-2">Method: GET</p>
+                <!-- Include other details as needed -->
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-2">Order Details SINGLE</h2>
+                <p class="mb-2">Before using any of the endpoints, you need to authenticate. You can do this by sending
+                    a GET request <code>/api/client/orderdetails?oid=32
+                    </code> with the following JSON Response:</p>
+                <pre class="bg-gray-500 p-2 rounded-md whitespace-pre-wrap overflow-auto"><code>{
+                        "error": false,
+                        "message": "Order Details.",
+                        "data": [
+                          {
+                            "order_id": 32,
+                            "order_status": "Success",
+                            "order_date": "2023-11-10T00:00:00.000Z",
+                            "delivery_date": "2023-11-11T00:00:00.000Z",
+                            "delivery_status": "UnDelivered",
+                            "customer_details": "{\"name\":\"Maahi\",\"mobile\":1234567890,\"whatsapp\":1234567890}",
+                            "products_details": "[{\"value\":\"1\",\"dress_type\":\"Ready Made\",\"dress_name\":\"Coat Suit\",\"unit\":\"qty\",\"price\":\"1000.00\",\"size\":\"Free Size\",\"new_mp_name\":\"\",\"measurement\":\"\",\"meter\":\"\",\"quantity\":\"12\",\"total\":12000}]",
+                            "billing_details": "{\"total\":12000,\"discount\":0,\"paytotal\":12000,\"paid\":\"10000\",\"paidmode\":\"Cash\",\"balance\":0}"
+                          }
+                        ]
+                      }</code></pre>
+                <p class="mb-2">Headers:
+                    <code>Cookie: token=$2a$10$w69QrbMZ8EoQpHcM1TsRY.hTKRGnUbKal3o4N4Ku.n9.RwbCYTki6</code></p>
+                <p class="mb-2">Endpoint: <code>/api/client/orderdetails?oid=32</code></p>
+                <p class="mb-2">Method: GET</p>
+                <!-- Include other details as needed -->
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-2">Customer list</h2>
+                <p class="mb-2">Before using any of the endpoints, you need to authenticate. You can do this by sending
+                    a GET request <code>/api/client/customerlist
+                    </code> with the following JSON Response:</p>
+                <pre class="bg-gray-500 p-2 rounded-md whitespace-pre-wrap overflow-auto">
+                    <code>{
+                        "error": false,
+                        "message": "Customer List.",
+                        "data": [{
+                            "cname": "Arjun",
+                            "mobile": 1234543456,
+                            "whatsapp": 1234543456,
+                            "create_date": "2023-11-11"
+                        }, {
+                            "cname": "Aman",
+                            "mobile": 12347654567,
+                            "whatsapp": 12347654567,
+                            "create_date": "2023-11-11"
+                        }]
+                    }</code>
+                </pre>
+                <p class="mb-2">Headers:
+                    <code>Cookie: token=$2a$10$w69QrbMZ8EoQpHcM1TsRY.hTKRGnUbKal3o4N4Ku.n9.RwbCYTki6</code></p>
+                <p class="mb-2">Endpoint: <code>/api/client/customerlist</code></p>
+                <p class="mb-2">Method: GET</p>
+                <!-- Include other details as needed -->
+            </section>
+
+
+
+
+        </main>
+    </div>
+</body>
+
+</html>

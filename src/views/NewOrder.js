@@ -4,6 +4,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   FlatList,
   ScrollView,
   KeyboardAvoidingView,
@@ -12,29 +13,27 @@ import {
 } from 'react-native';
 import {TextInput, IconButton, Button, RadioButton} from 'react-native-paper';
 import Config from '../api/Config';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   sendPostRequest,
   sendGetRequest,
-  sendPutRequest,
-  sendDeleteRequest,
 } from '../helpers/apiRequestWithHeaders';
 import ErrorPopup from '../components/ErrorPopup';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import OrderSuccessPopup from '../components/OrderSuccessPopup';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {
   saveDataToAsyncStorage,
   getDataFromAsyncStorage,
 } from '../helpers/DataToAsyncStorage';
-import PDFGenerator from '../components/PDFGenerator'; // Import the PDFGenerator component
 import {useFocusEffect} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
-const {CUSTOMER_SEARCH, ALL_PRODUCT_API, ORDER_CREATE_API, } = Config;
+const {CUSTOMER_SEARCH, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API,} = Config;
 
 const NewOrderView = () => {
   // Set the displayName property for the functional component
   NewOrderView.displayName = 'NewOrderView';
+  const navigation = useNavigation();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -68,8 +67,9 @@ const NewOrderView = () => {
       setSelectedItems([]);
       setResetFields(false);
       setTableVisible(false);
-
       setShouldFetchSavedProducts(true);
+      setIsSuccessModalVisible(false);
+      setOrderDetails(null);
     }, []),
   );
 
@@ -104,9 +104,14 @@ const NewOrderView = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [resetFields, setResetFields] = useState(false);
   const [isTableVisible, setTableVisible] = useState(false);
-
   const [shouldFetchSavedProducts, setShouldFetchSavedProducts] =
     useState(true);
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [invoiceDetails, setInvoiceDetails] = useState([]);
+  const [isInvoicePrintVisible, setInvoicePrintVisible] = useState(false);
+
+
 
   const handleAddItem = () => {
     if (selectedMaterial === 'Stitching') {
@@ -343,11 +348,11 @@ const NewOrderView = () => {
 
   // Update the customer object
   const customer = {
-    name: name, // Update with actual name value
-    mobile: phone, // Store as an integer
-    whatsapp: whatsapp, // Store as an integer
+    name: name,               // Update with actual name value
+    mobile: parseInt(phone),  // Convert to integer
+    whatsapp: parseInt(whatsapp), // Convert to integer
   };
-  // console.log(customer);
+   console.log(customer);
 
   const handleNext = async () => {
     // Handle each step *1*
@@ -387,7 +392,6 @@ const NewOrderView = () => {
 
       //function to convert selectedItems when you need to update the products data:
       const products = convertSelectedItemsToProducts(selectedItems);
-
       const createInvoiceData = (dDate, customer, products, billing) => {
         return {
           dDate,
@@ -401,8 +405,8 @@ const NewOrderView = () => {
 
       // Generate invoice data based on the customer, products, and billing data
       const invoiceData = createInvoiceData(dDate, customer, products, billing);
-      console.warn('products: ', products);
-      console.warn('invoiceData: ', invoiceData);
+      // console.warn('products: ', products);
+      // console.warn('invoiceData: ', invoiceData);
 
       // Send the POST request
       const createOrder = async () => {
@@ -414,7 +418,9 @@ const NewOrderView = () => {
             // Handle the error here
           } else {
             console.log('Order created successfully:', response);
-            // Handle the success response here
+            // Set order details and show success modal
+            setOrderDetails(response);
+            setIsSuccessModalVisible(true);
           }
         } catch (error) {
           console.error('Error creating order:', error);
@@ -443,6 +449,51 @@ const NewOrderView = () => {
 
   const handleCloseError = () => {
     setError(null); // Clear the error message
+  };
+
+  // Function to close the success modal
+  const closeSuccessModal = () => {
+    setIsSuccessModalVisible(false);
+    // Add any additional actions you want to perform after closing the modal
+  };
+
+  // Function to handle order print
+  const handleOrderPrint = () => {
+    // Add logic for order print
+    // For example, navigate to a new screen or perform a print action
+  };
+
+  const handleInvoicePrint = async () => {
+    setIsLoading(true);
+    // Set order details here based on your logic or API call
+    // For example, fetch order details using the order ID
+    const orderUrl = `${Config.ORDER_DETAILS_API}?oid=${orderDetails.order_id}`;
+    
+    try {
+      const invoiceDetailsResponse = await sendGetRequest(orderUrl);
+  
+      if (invoiceDetailsResponse.error) {
+        console.error('Error fetching invoice details:', invoiceDetailsResponse.message);
+        // Handle the error here
+      } else {
+        const updatedInvoiceDetails = invoiceDetailsResponse.data[0]; // Assuming the data is an array
+        setInvoiceDetails(updatedInvoiceDetails);
+        // console.log('#477 setInvoiceDetails: ', orderUrl, '=====',  invoiceDetails)
+        // Toggle the visibility of the InvoicePrint component in the success modal
+        setInvoicePrintVisible(!isInvoicePrintVisible);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      // Handle the error here
+    }
+    
+  };
+ 
+  const handleNewOrder = () => {
+    // Navigate to the "NewOrder" screen
+    navigation.navigate('Home'); // Replace 'NewOrder' with the actual name of your NewOrder screen
+    setOrderDetails(null);
   };
 
   return (
@@ -570,7 +621,7 @@ const NewOrderView = () => {
                     setOpen={setOpen}
                     setValue={setProduct}
                     setItems={() => {}}
-                    placeholder={selectedMaterial}
+                    placeholder="Select Product"
                     placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
                     disableBorderRadius={false}
                     showArrowIcon={false}
@@ -659,14 +710,18 @@ const NewOrderView = () => {
                     </Text>
 
                     <View className="flex-row w-1/4 h-14 border py-1 px-1 border-gray-500">
+                    <TouchableWithoutFeedback onPress={showDatePicker}>
+                    <View>
                       <TextInput
                         mode="outlined"
                         value={dDate} // Display the selected date
-                        onTouchStart={showDatePicker} // Show the date picker when the input is touched
-                        className="flex-1 "
-                        available
-                        space
+                        onFocus={showDatePicker} // Show the date picker when the input is touched
+                        className="flex-1"
+                        editable={false}
+                        
                       />
+                      </View>
+                          </TouchableWithoutFeedback>
                       <IconButton
                         icon="calendar"
                         color="#000"
@@ -765,16 +820,6 @@ const NewOrderView = () => {
                     </Text>
                   </View>
 
-                  <View className="flex flex-row justify-start p-5">
-                    <Text className="text-red-500">
-                      PDFGenerator component :
-                    </Text>
-                    <PDFGenerator
-                      selectedItems={selectedItems}
-                      customer={customer}
-                      billing={billing}
-                    />
-                  </View>
                 </View>
               </ScrollView>
             )}
@@ -810,6 +855,20 @@ const NewOrderView = () => {
               errorMessage={error}
               onClose={handleCloseError}
             />
+
+            {/* Conditionally render Order Success Popup */}
+            {orderDetails?.order_id && (
+              <OrderSuccessPopup
+                isVisible={isSuccessModalVisible}
+                orderDetails={orderDetails}
+                onClose={handleNewOrder}
+                onOrderPrint={handleOrderPrint}
+                onInvoicePrint={handleInvoicePrint}
+                isLoading={isLoading}
+                invoiceDetails={invoiceDetails}
+                isInvoicePrintVisible={isInvoicePrintVisible}
+              />
+            )}
           </View>
         </View>
 

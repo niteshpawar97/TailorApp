@@ -286,6 +286,8 @@ const AppNavigator = {
   Splash: Splash,
   Login: Login,
   Dashboard: Dashboard,
+  NewOrder: NewOrder,
+  History: History,
 };
 
 export default AppNavigator;

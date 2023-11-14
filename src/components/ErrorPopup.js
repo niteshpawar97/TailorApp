@@ -1,3 +1,4 @@
+//src/components/ErrorPopup.js
 import React from 'react';
 import { View, Modal } from 'react-native';
 import { Button, Text } from 'react-native-paper';
