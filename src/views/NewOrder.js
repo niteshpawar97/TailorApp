@@ -46,7 +46,7 @@ const NewOrderView = () => {
       setSelectedCustomer(null);
       setShouldFetchSuggestions(true);
       setError(null);
-      setCurrentStep(1);
+      setCurrentStep(3);
       setIsLoading(false);
       setQuantity('');
 
@@ -699,8 +699,8 @@ const NewOrderView = () => {
             {currentStep === 3 && (
               // Items Show added
               <ScrollView>
-                <View className="px-6 py-2 w-full text-center rounded-md bg-amber-100">
-                  <Text className="text text-xl p-2 bg-yellow-200 text-gray-600 font-bold">
+                <View className="px-6 py-2 w-full text-center rounded-md bg-gray-100">
+                  <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
                     Order Confirmation
                   </Text>
 
@@ -716,7 +716,7 @@ const NewOrderView = () => {
                         mode="outlined"
                         value={dDate} // Display the selected date
                         onFocus={showDatePicker} // Show the date picker when the input is touched
-                        className="flex-1"
+                        className="flex-1 w-32"
                         editable={false}
                         
                       />
@@ -827,25 +827,25 @@ const NewOrderView = () => {
             <View className="flex flex-row justify-between">
               {currentStep > 1 && (
                 <TouchableOpacity
-                  className="bg-gray-400 text-white font-bold py-2 px-4 rounded-md"
+                  className="bg-gray-300 text-white font-bold py-2 px-4 rounded-md"
                   onPress={handleBack}>
                   <Text className="text-center text-gray-800 font-semibold text-xl">
-                    BACK
+                    Back
                   </Text>
                 </TouchableOpacity>
               )}
 
               <TouchableOpacity
-                className="bg-gray-800 w-36 text-white font-bold py-2 px-4 rounded-md"
+                className="bg-gray-800 w-44 text-white font-bold py-2 px-4 rounded-md"
                 onPress={handleNext}>
-                <Text className="text-center text-yellow-200 font-semibold text-xl">
+                <Text className="text-center text-gray-50 font-semibold text-xl">
                   {isLoading
                     ? 'Processing...'
                     : currentStep === 3
                     ? 'Order Confirm'
                     : currentStep === 2
-                    ? 'NEXT'
-                    : 'NEXT'}
+                    ? 'Next'
+                    : 'Next'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -873,12 +873,12 @@ const NewOrderView = () => {
         </View>
 
         {currentStep === 2 && (
-          <View className="flex-1 justify items bg-gray-400 px-2">
-            <Text className="text text-xl p-2 bg-gray-200 text-red-600 font-bold">
-              Seleted Items List
+          <View className="flex-1 justify items bg-gray-100 px-2">
+            <Text className="text text-xl p-2 bg-gray-50 text-gray-900 font-bold">
+              Seleted Items
             </Text>
 
-            <View className="flex flex-row justify-between bg-green-400 mt-1  py-2 px-3">
+            <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
               <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
               <Text className="w-1/6 text-gray-950 font-extrabold">
                 Item Name
@@ -893,13 +893,13 @@ const NewOrderView = () => {
               </Text>
               <Text className="w-1/6 text-gray-950 font-extrabold">Total</Text>
               {/* <Text className="w-1/6 text-gray-950 font-extrabold">Amount</Text> */}
-              <Text className="w-1/8 text-red-500 font-extrabold">Action</Text>
+              <Text className="w-1/8 text-gray-700 font-extrabold">Action</Text>
             </View>
 
             {selectedItems.map((item, index) => (
               <View
                 key={index}
-                className="flex flex-row justify-between items-center bg-lime-200 border py-1 px-3">
+                className="flex flex-row justify-between items-center bg-gray-100 border py-1 px-3">
                 <Text className="w-1/12 text-zinc-700 font-extrabold">
                   {index + 1}
                 </Text>
@@ -924,7 +924,8 @@ const NewOrderView = () => {
                 </Text>
                 {/* Button to remove this item */}
                 <TouchableOpacity onPress={() => handleRemoveItem(index)}>
-                  <Text className="bg-red-500 w-1/8 text-white font-bold p-1 rounded-md">
+                  <Text className="bg-gray-700 w-1/8 text-white font-bold
+                  px-2 py-1 rounded-md">
                     Remove
                   </Text>
                 </TouchableOpacity>
@@ -934,12 +935,12 @@ const NewOrderView = () => {
         )}
 
         {currentStep === 3 && (
-          <View className="flex-1 justify items bg-gray-400 px-2">
-            <Text className="text text-xl p-2 bg-gray-200 text-red-600 font-bold">
+          <View className="flex-1 justify items bg-gray-100 px-2">
+            <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
               Order Items Confirmation
             </Text>
 
-            <View className="flex flex-row justify-between bg-green-400 mt-1  py-2 px-3">
+            <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
               <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
               <Text className="w-1/6 text-gray-950 font-extrabold">
                 Item Name
@@ -958,7 +959,7 @@ const NewOrderView = () => {
             {selectedItems.map((item, index) => (
               <View
                 key={index}
-                className="flex flex-row justify-between items-center bg-lime-200 border py-2 px-3">
+                className="flex flex-row justify-between items-center bg-gray-100 border py-2 px-3">
                 <Text className="w-1/12 text-zinc-700 font-extrabold">
                   {index + 1}
                 </Text>
