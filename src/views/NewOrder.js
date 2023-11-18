@@ -46,7 +46,7 @@ const NewOrderView = () => {
       setSelectedCustomer(null);
       setShouldFetchSuggestions(true);
       setError(null);
-      setCurrentStep(3);
+      setCurrentStep(1);
       setIsLoading(false);
       setQuantity('');
 
