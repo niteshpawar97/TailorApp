@@ -3,32 +3,36 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Config from '../api/Config';
-import {sendGetRequest} from '../helpers/apiRequestWithHeaders';
+import {
+  sendPostRequest,
+  sendGetRequest,
+} from '../helpers/apiRequestWithHeaders';
 import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
 
-const StockScreen = ({navigation}) => {
+const PayHistoryScreen = ({navigation}) => {
   // State to manage the date range and search term
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [stocksData, setStocksData] = useState([]);
+  const [payHistoryData, setPayHistoryData] = useState([]);
 
   useEffect(() => {
-    fetchStock();
+    fetcPayHistory();
   }, []);
 
   // Use useFocusEffect to fetch order history data when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
-      fetchStock();
+      fetcPayHistory();
     }, []), // The empty dependency array ensures this effect runs only once when the component mounts
   );
 
-  const fetchStock = async () => {
+  const fetcPayHistory = async () => {
     try {
-      const response = await sendGetRequest(Config.STOCK_LIST_API);
+      const response = await sendGetRequest(Config.PAY_HISTORY_API);
+      console.log('payHistoryData: ', response.data);
       if (response && response.data) {
-        setStocksData(response.data);
+        setPayHistoryData(response.data);
       } else {
         console.error('Error fetching order history data');
       }
@@ -36,6 +40,7 @@ const StockScreen = ({navigation}) => {
       console.error('Error fetching order history data', error);
     }
   };
+  
 
   return (
     <View className="py-2 px-4">
@@ -73,42 +78,48 @@ const StockScreen = ({navigation}) => {
 
       <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
         <Text className="text-gray-950 font-extrabold">#</Text>
-        <Text className="w-1/12 text-gray-950 font-extrabold">Order Id</Text>
-        <Text className="w-1/4 text-gray-950 font-extrabold">Name</Text>
-        <Text className="w-1/12  text-gray-950 font-extrabold">Type</Text>
-        <Text className="w-1/12  text-gray-950 font-extrabold">Stock</Text>
-        <Text className="w-1/12  text-gray-950 font-extrabold">
-        Unit
+        <Text className="text-gray-950 font-extrabold">Order Id</Text>
+        <Text className="w-1/12 text-gray-950 font-extrabold">Name</Text>
+        <Text className="w-1/12  text-gray-950 font-extrabold">Mobile</Text>
+        <Text className="w-1/12  text-gray-950 font-extrabold">Invoice Amount</Text>
+        <Text className="w-1/12 text-gray-950 font-extrabold">Paid</Text>
+        <Text className="w-1/12 text-gray-950 font-extrabold">
+          PayMode
         </Text>
-        <Text className="w-1/12 text-gray-950 font-extrabold">Price</Text>
-        </View>
+        <Text className="w-1/12 text-red-500 font-extrabold">
+          PayDate
+        </Text>
+      </View>
 
       <FlatList
         className="mb-4"
-        data={stocksData}
+        data={payHistoryData}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item, index}) => (
           <View className="flex flex-row justify-between items-center bg-gray-100 border py-1 px-3 mt-1">
             <Text className=" text-gray-950  text-lg font-medium">
               {index + 1}
             </Text>
-            <Text className="w-1/12 text-gray-950  text-lg font-medium">
+            <Text className="text-gray-950  text-lg font-medium">
               {item.id}
             </Text>
-            <Text className="w-1/4 text-gray-950  text-lg font-medium">
+            <Text className="w-1/12 text-gray-950  text-lg font-medium">
               {item.name}
             </Text>
             <Text className="w-1/12 text-gray-950  text-lg font-medium">
-              {item.type}
+              {item.mobile}
             </Text>
             <Text className="w-1/12 text-gray-950  text-lg font-medium">
-              {item.stock}
+              {item.invoice_amt}
             </Text>
             <Text className="w-1/12 text-gray-950  text-lg font-medium">
-              {item.unit}
+              {item.paid_amt}
             </Text>
             <Text className="w-1/12 text-gray-950  text-lg font-medium">
-              {item.price}
+              {item.paymode}
+            </Text>
+            <Text className="w-1/12 text-gray-950  text-lg font-medium">
+              {item.paydate}
             </Text>
           </View>
         )}
@@ -117,4 +128,4 @@ const StockScreen = ({navigation}) => {
   );
 };
 
-export default StockScreen;
+export default PayHistoryScreen;

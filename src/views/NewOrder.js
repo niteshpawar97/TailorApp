@@ -501,7 +501,7 @@ const NewOrderView = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
       <View className="flex-1 flex-row bg-gray-200">
-        <View className="flex-1 items-center justify rounded-lg shadow-sm py-1">
+        <View className="flex-1 items-center justify rounded-lg shadow-sm py-1 bg-gray-50">
           <Text className="text-xl text-center font-semibold text-gray-900">
             Order Details (Step {currentStep}/3)
           </Text>

@@ -49,15 +49,15 @@ const LoginView = () => {
         className="absolute w-full h-full z-0"
       />
 
-      <View className="flex p-5 w-80 bg-yellow-100 rounded-lg shadow-lg">
-        <View className="flex w-72 flex-col gap-6">
-          <Text className="text-gray-600 text-2xl text-center font-semibold mt-0 mb-5">
+      <View className="flex py-6 px-12 w-96 bg-gray-200 rounded-lg shadow-lg">
+        <View className="flex w-72 flex-col gap-6 mb-4">
+          <Text className="text-gray-800 text-2xl text-center font-semibold mt-0 mb-2">
             Welcome to Login
           </Text>
           <TextInput
             mode="outlined"
             label="Username"
-            className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-full"
+            className="rounded-md mt-2 w-full"
             placeholder="Username"
             onChangeText={text => setUsername(text)}
             value={username}
@@ -69,7 +69,7 @@ const LoginView = () => {
           <TextInput
             mode="outlined"
             label="Password"
-            className="placeholder-gray-800 text-placeholder-gray-800 rounded-md mt-2 w-full"
+            className="rounded-md mt-2 w-full"
             placeholder="Password"
             onChangeText={text => setPassword(text)}
             value={password}
@@ -78,11 +78,20 @@ const LoginView = () => {
 
           <TouchableOpacity
             onPress={handleLogin}
-            className="bg-gray-800  w-72 font-bold py-2 px-4 rounded-full border border-blue-700">
-            <Text className="text-center text-yellow-200 font-semibold text-xl">
-              LOGIN
+            className="bg-gray-800  w-72 font-bold py-2 px-4 rounded-xl -mb-2">
+            <Text className="text-center text-white font-semibold text-xl">
+              Login
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            // onPress={handleLogin}
+            className="bg-gray-400  w-72 font-bold py-2 px-4 rounded-xl">
+            <Text className="text-center text-gray-700 font-semibold text-xl">
+              Reset Password
+            </Text>
+          </TouchableOpacity>
+
           <ErrorPopup
             isVisible={error !== null}
             errorMessage={error}

@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Card, Title} from 'react-native-paper';
 import LoginController from '../controllers/LoginController'; // Import the checkLoginStatus function
 import ErrorPopup from '../components/ErrorPopup';
+import LottieView from 'lottie-react-native';
+
 
 function DashboardView() {
   const [user, setUser] = useState(null);
@@ -62,9 +64,9 @@ function DashboardView() {
 
   return (
     <ScrollView>
-      <View className="flex-1 flex-col gap-2">
-        <View className="flex-1 flex justify-between">
-          <View className="flex-1 p-4 bg-stone-400">
+      <View className="flex-1 flex-col gap-1 ">
+        <View className="flex-1 flex justify-between ">
+          <View className="flex-1 p-4 bg-gray-50">
             {/* <Image
         source={require('../assets/bg.jpg')}
         resizeMode="cover"
@@ -72,81 +74,97 @@ function DashboardView() {
       /> */}
             {user && (
               <>
-                <Card className="bg-gray-200 p-2 mb-2">
-                  <Text className="text-2xl text-lime-600 font-semibold">
-                    User: {user.uname}
+                <Card className="bg-gray-300 p-2 mb-2">
+                  <Text className="text-2xl text-gray-700 font-semibold">
+                    {user.uname}
                   </Text>
                 </Card>
-
-                {/* <Text className="text-2xl text-yellow-600 font-semibold">
-                  Subscription type: {user.subscription_type}
-                </Text> */}
               </>
             )}
 
-            <View className="flex flex-col gap-2">
-              <Card className="h-32 bg-gray-200 mt-2">
+            <View className="flex flex-row gap-2">
+              <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                  <View className="absolute top-0 right-0">
-                    <Image
-                      source={{uri: 'https://soft.niketgroup.in/img/bill.png'}}
-                      className="w-24 h-24 m-5"
-                    />
-                  </View>
+                  
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
                         Billing | Today{' '}
                       </Title>
-                      <Title className="pl-10 text-gray-800 text-xl">0</Title>
+                      <Title className="p-2 text-gray-800 text-5xl">0</Title>
                     </Card.Content>
                   </View>
                 </View>
               </Card>
 
-              <Card className="h-32 bg-gray-200 mt-2">
+              <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                  <View className="absolute top-0 right-0">
-                    <Image
-                      source={{uri: 'https://soft.niketgroup.in/img/order.png'}}
-                      className="w-24 h-24 m-5"
-                    />
-                  </View>
+                  
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
                         Order | Today{' '}
                       </Title>
-                      <Title className="pl-10 text-gray-800 text-xl">0</Title>
+                      <Title className="p-2 text-gray-800 text-5xl">0</Title>
                     </Card.Content>
                   </View>
                 </View>
               </Card>
 
-              <Card className="h-32 bg-gray-200 mt-2">
+              <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                  <View className="absolute top-0 right-0">
-                    <Image
-                      source={{
-                        uri: 'https://soft.niketgroup.in/img/people.png',
-                      }}
-                      className="w-24 h-24 m-5"
-                    />
-                  </View>
+                 
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
                         Customers | Today{' '}
                       </Title>
-                      <Title className="pl-10 text-gray-800 text-xl">0</Title>
+                      <Title className="p-2 text-gray-800 text-5xl">0</Title>
                     </Card.Content>
                   </View>
                 </View>
               </Card>
 
-              <Text className="h-52 text-xl pl-5 pt-3 text-gray-700 bg-gray-200 mt-2 border border-red-400 rounded-lg">
+              
+
+              <Card className="flex-1 h-32 bg-gray-300 mt-2">
+                <View className="relative">
+                 
+                  <View className="flex justify-end">
+                    <Card.Content>
+                      <Title className="pl-2 text-gray-900 text-xl pt-5">
+                        Recevice Cash | Today{' '}
+                      </Title>
+                      <Title className="p-2 text-gray-800 text-5xl">0</Title>
+                    </Card.Content>
+                  </View>
+                </View>
+              </Card>
+
+              
+
+              <Card className="flex-1 h-32 bg-gray-300 mt-2">
+                <View className="relative">
+                 
+                  <View className="flex justify-end">
+                    <Card.Content>
+                      <Title className="pl-2 text-gray-900 text-xl pt-5">
+                        Balance | Today{' '}
+                      </Title>
+                      <Title className="p-2 text-gray-800 text-5xl">0</Title>
+                    </Card.Content>
+                  </View>
+                </View>
+              </Card>
+
+              </View>
+
+              <View>
+              <Text className="h-52 text-xl pl-5 pt-3 text-gray-700 bg-gray-300 mt-2 rounded-lg">
                 Recent Orders | Today
               </Text>
+
+              <LottieView source={require('../assets/lottie/home.json')} autoPlay loop />
             </View>
 
             <ErrorPopup

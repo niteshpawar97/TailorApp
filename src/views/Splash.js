@@ -20,7 +20,7 @@ const SplashView = ({ navigation }) => {
           navigation.replace('Login'); // Replace 'Login' with your screen name
         console.log('Login Show : user not exits');
       }
-    }, 2000); // 2000 milliseconds = 2 seconds
+    }, 3000); // 2000 milliseconds = 2 seconds
       } catch (error) {
         console.error('Error checking user data:', error);
         // In case of an error, navigate to the LoginView as a fallback
@@ -33,7 +33,7 @@ const SplashView = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View className="h-full w-full bg-yellow-200 flex justify-center items-center"> 
+    <View className="h-full w-full bg-gray-300 flex justify-center items-center"> 
 
     <Image
       source={require('../assets/app_logo.png')}
@@ -41,7 +41,7 @@ const SplashView = ({ navigation }) => {
       className="w-56 h-56 mx-auto"
     />
 
-    <Text className="text-pink-950 text-3xl font-light pt-1 mt-36">Loading...
+    <Text className="text-gray-800 text-3xl font-light pt-1 mt-36">Loading...
     </Text>
 
   </View>

@@ -5,48 +5,91 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Splash from '../views/Splash';
 import Login from '../views/Login';
 import Dashboard from '../views/Dashboard';
-import Status from '../views/Status';
+import PayHistory from '../views/PayHistory';
 import Stock from '../views/Stock';
 import Customer from '../views/Customer';
 import NewOrder from '../views/NewOrder';
 import History from '../views/History';
-import { KeyboardAvoidingView, Platform } from 'react-native'; // Import KeyboardAvoidingView
+import {KeyboardAvoidingView, Platform} from 'react-native'; // Import KeyboardAvoidingView
+import LottieView from 'lottie-react-native';
+import {
+  getFocusedRouteNameFromRoute,
+  useNavigation, useIsFocused 
+} from '@react-navigation/native';
+
 const Tab = createBottomTabNavigator();
 
 const AppNavigator = {
-  DashboardNavigator: () => {
+  DashboardNavigator: ({route}) => {
+    // Ensure that route is defined before accessing its properties
+    const activeScreen = route ? getFocusedRouteNameFromRoute(route) : null;
+
+    const {state} = useNavigation();
+
+    const getTabIcon = (name, color, size) => {
+      const animationSource = {
+        Dashboard: require('../assets/lottie/home.json'),
+        'New Order': require('../assets/lottie/order.json'),
+        History: require('../assets/lottie/history.json'),
+        PayHistory: require('../assets/lottie/pay.json'),
+        Stock: require('../assets/lottie/stock.json'),
+        Customers: require('../assets/lottie/customer.json'),
+      };
+
+      // const isFocused =
+      // state && state.index === state.routes.findIndex(r => r.name === name);
+      //const isFocused = route.name === name;
+      const isFocused = useIsFocused();
+      // console.log(`Tab: ${name}, isFocused: ${isFocused}`);
+      // console.log('Route:', route); // Log the entire route object
+
+      return (
+        <LottieView
+          source={animationSource[name]}
+          autoPlay={isFocused} // Auto play only for the focused screen
+        />
+      );
+    };
+
     return (
-      
       <Tab.Navigator>
         <Tab.Screen
           name="Home"
           component={Dashboard}
           options={({navigation}) => ({
             headerTitle: 'TailorApp',
+            headerTintColor: '#FFFFFF', // Set the text color
+            headerStyle: {backgroundColor: '#495373'},
             headerRight: () => (
-                <MaterialCommunityIcons.Button
-                  name="logout"
-                  backgroundColor="transparent"
-                  color="black"
-                  onPress={async () => {
-                    // Implement your logout logic here
-                    try {
-                      // Clear user data from AsyncStorage
-                      AsyncStorage.removeItem('user');
-                      console.log('User data cleared from AsyncStorage.');
+              <MaterialCommunityIcons.Button
+                name="logout"
+                backgroundColor="transparent"
+                color="white"
+                onPress={async () => {
+                  // Implement your logout logic here
+                  try {
+                    // Clear user data from AsyncStorage
+                    AsyncStorage.removeItem('user');
+                    console.log('User data cleared from AsyncStorage.');
 
-                      // Navigate to the login or home screen
-                      navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-                      console.log('Navigated to the Login screen.');
-                    } catch (error) {
-                      console.error('Error logging out:', error);
-                    }
-                  }}
-                />
+                    // Navigate to the login or home screen
+                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+                    console.log('Navigated to the Login screen.');
+                  } catch (error) {
+                    console.error('Error logging out:', error);
+                  }
+                }}
+              />
             ),
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="home" color={color} size={size} />
-            ),
+            // tabBarIcon: ({color, size}) => (
+
+            //    <MaterialCommunityIcons name="home" color={color} size={size} />
+            //   // <LottieView
+            //   //   source={require('../assets/lottie/home.json')}
+            //   //   autoPlay
+            //   // />
+            // ),
+            tabBarIcon: ({color, size}) => getTabIcon('Dashboard', color, size),
           })}
         />
 
@@ -55,11 +98,13 @@ const AppNavigator = {
           component={NewOrder}
           options={({navigation}) => ({
             headerTitle: 'New Order',
+            headerTintColor: '#FFFFFF', // Set the text color
+            headerStyle: {backgroundColor: '#495373'},
             headerLeft: () => (
               <MaterialCommunityIcons.Button
                 name="arrow-left"
                 backgroundColor="transparent"
-                color="black"
+                color="white"
                 onPress={() => {
                   // Implement your back button logic here
                   navigation.goBack();
@@ -70,7 +115,7 @@ const AppNavigator = {
               <MaterialCommunityIcons.Button
                 name="logout"
                 backgroundColor="transparent"
-                color="black"
+                color="white"
                 onPress={() => {
                   // Implement your logout logic here
                   try {
@@ -87,149 +132,14 @@ const AppNavigator = {
                 }}
               />
             ),
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons
-                name="plus-box"
-                color={color}
-                size={size}
-              />
-            ),
-          })}
-        />
-
-        <Tab.Screen
-          name="Status"
-          component={Status}
-          options={({navigation}) => ({
-            headerTitle: 'Status',
-            headerLeft: () => (
-              <MaterialCommunityIcons.Button
-                name="arrow-left"
-                backgroundColor="transparent"
-                color="black"
-                onPress={() => {
-                  // Implement your back button logic here
-                  navigation.goBack();
-                }}
-              />
-            ),
-            headerRight: () => (
-              <MaterialCommunityIcons.Button
-                name="logout"
-                backgroundColor="transparent"
-                color="black"
-                onPress={() => {
-                  // Implement your logout logic here
-                  try {
-                    // Clear user data from AsyncStorage
-                    AsyncStorage.removeItem('user');
-                    console.log('User data cleared from AsyncStorage.');
-
-                    // Navigate to the login or home screen
-                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-                    console.log('Navigated to the Login screen.');
-                  } catch (error) {
-                    console.error('Error logging out:', error);
-                  }
-                }}
-              />
-            ),
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons
-                name="timetable"
-                color={color}
-                size={size}
-              />
-            ),
-          })}
-        />
-
-        <Tab.Screen
-          name="Stock"
-          component={Stock}
-          options={({navigation}) => ({
-            headerTitle: 'Stock',
-            headerLeft: () => (
-              <MaterialCommunityIcons.Button
-                name="arrow-left"
-                backgroundColor="transparent"
-                color="black"
-                onPress={() => {
-                  // Implement your back button logic here
-                  navigation.goBack();
-                }}
-              />
-            ),
-            headerRight: () => (
-              <MaterialCommunityIcons.Button
-                name="logout"
-                backgroundColor="transparent"
-                color="black"
-                onPress={() => {
-                  // Implement your logout logic here
-                  try {
-                    // Clear user data from AsyncStorage
-                    AsyncStorage.removeItem('user');
-                    console.log('User data cleared from AsyncStorage.');
-
-                    // Navigate to the login or home screen
-                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-                    console.log('Navigated to the Login screen.');
-                  } catch (error) {
-                    console.error('Error logging out:', error);
-                  }
-                }}
-              />
-            ),
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="dolly" color={color} size={size} />
-            ),
-          })}
-        />
-        <Tab.Screen
-          name="Customers"
-          component={Customer}
-          options={({navigation}) => ({
-            headerTitle: 'Customers',
-            headerLeft: () => (
-              <MaterialCommunityIcons.Button
-                name="arrow-left"
-                backgroundColor="transparent"
-                color="black"
-                onPress={() => {
-                  // Implement your back button logic here
-                  navigation.goBack();
-                }}
-              />
-            ),
-            headerRight: () => (
-              <MaterialCommunityIcons.Button
-                name="logout"
-                backgroundColor="transparent"
-                color="black"
-                onPress={() => {
-                  // Implement your logout logic here
-                  try {
-                    // Clear user data from AsyncStorage
-                    AsyncStorage.removeItem('user');
-                    console.log('User data cleared from AsyncStorage.');
-
-                    // Navigate to the login or home screen
-                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-                    console.log('Navigated to the Login screen.');
-                  } catch (error) {
-                    console.error('Error logging out:', error);
-                  }
-                }}
-              />
-            ),
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons
-                name="account-group"
-                color={color}
-                size={size}
-              />
-            ),
+            // tabBarIcon: ({color, size}) => (
+            //   <MaterialCommunityIcons
+            //     name="plus-box"
+            //     color={color}
+            //     size={size}
+            //   />
+            // ),
+            tabBarIcon: ({color, size}) => getTabIcon('New Order', color, size),
           })}
         />
 
@@ -238,11 +148,13 @@ const AppNavigator = {
           component={History}
           options={({navigation}) => ({
             headerTitle: 'History',
+            headerTintColor: '#FFFFFF', // Set the text color
+            headerStyle: {backgroundColor: '#495373'},
             headerLeft: () => (
               <MaterialCommunityIcons.Button
                 name="arrow-left"
                 backgroundColor="transparent"
-                color="black"
+                color="white"
                 onPress={() => {
                   // Implement your back button logic here
                   navigation.goBack();
@@ -253,7 +165,7 @@ const AppNavigator = {
               <MaterialCommunityIcons.Button
                 name="logout"
                 backgroundColor="transparent"
-                color="black"
+                color="white"
                 onPress={() => {
                   // Implement your logout logic here
                   try {
@@ -270,13 +182,160 @@ const AppNavigator = {
                 }}
               />
             ),
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons
-                name="history"
-                color={color}
-                size={size}
+            // tabBarIcon: ({color, size}) => (
+            //   <MaterialCommunityIcons
+            //     name="history"
+            //     color={color}
+            //     size={size}
+            //   />
+            // ),
+            tabBarIcon: ({color, size}) => getTabIcon('History', color, size),
+          })}
+        />
+
+        <Tab.Screen
+          name="PayHistory"
+          component={PayHistory}
+          options={({navigation}) => ({
+            headerTitle: 'PayHistory',
+            headerTintColor: '#FFFFFF', // Set the text color
+            headerStyle: {backgroundColor: '#495373'},
+            headerLeft: () => (
+              <MaterialCommunityIcons.Button
+                name="arrow-left"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your back button logic here
+                  navigation.goBack();
+                }}
               />
             ),
+            headerRight: () => (
+              <MaterialCommunityIcons.Button
+                name="logout"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your logout logic here
+                  try {
+                    // Clear user data from AsyncStorage
+                    AsyncStorage.removeItem('user');
+                    console.log('User data cleared from AsyncStorage.');
+
+                    // Navigate to the login or home screen
+                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+                    console.log('Navigated to the Login screen.');
+                  } catch (error) {
+                    console.error('Error logging out:', error);
+                  }
+                }}
+              />
+            ),
+            // tabBarIcon: ({color, size}) => (
+            //   <MaterialCommunityIcons
+            //     name="timetable"
+            //     color={color}
+            //     size={size}
+            //   />
+            // ),
+            tabBarIcon: ({color, size}) =>
+              getTabIcon('PayHistory', color, size),
+          })}
+        />
+
+        <Tab.Screen
+          name="Stock"
+          component={Stock}
+          options={({navigation}) => ({
+            headerTitle: 'Stock',
+            headerTintColor: '#FFFFFF', // Set the text color
+            headerStyle: {backgroundColor: '#495373'},
+            headerLeft: () => (
+              <MaterialCommunityIcons.Button
+                name="arrow-left"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your back button logic here
+                  navigation.goBack();
+                }}
+              />
+            ),
+            headerRight: () => (
+              <MaterialCommunityIcons.Button
+                name="logout"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your logout logic here
+                  try {
+                    // Clear user data from AsyncStorage
+                    AsyncStorage.removeItem('user');
+                    console.log('User data cleared from AsyncStorage.');
+
+                    // Navigate to the login or home screen
+                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+                    console.log('Navigated to the Login screen.');
+                  } catch (error) {
+                    console.error('Error logging out:', error);
+                  }
+                }}
+              />
+            ),
+            // tabBarIcon: ({color, size}) => (
+            //   <MaterialCommunityIcons name="dolly" color={color} size={size} />
+            // ),
+            tabBarIcon: ({color, size}) => getTabIcon('Stock', color, size),
+          })}
+        />
+        <Tab.Screen
+          name="Customers"
+          component={Customer}
+          options={({navigation}) => ({
+            headerTitle: 'Customers',
+            headerTintColor: '#FFFFFF', // Set the text color
+            headerStyle: {backgroundColor: '#495373'},
+            headerLeft: () => (
+              <MaterialCommunityIcons.Button
+                name="arrow-left"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your back button logic here
+                  navigation.goBack();
+                }}
+              />
+            ),
+            headerRight: () => (
+              <MaterialCommunityIcons.Button
+                name="logout"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your logout logic here
+                  try {
+                    // Clear user data from AsyncStorage
+                    AsyncStorage.removeItem('user');
+                    console.log('User data cleared from AsyncStorage.');
+
+                    // Navigate to the login or home screen
+                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+                    console.log('Navigated to the Login screen.');
+                  } catch (error) {
+                    console.error('Error logging out:', error);
+                  }
+                }}
+              />
+            ),
+            // tabBarIcon: ({color, size}) => (
+            //   <MaterialCommunityIcons
+            //     name="account-group"
+            //     color={color}
+            //     size={size}
+            //   />
+            // ),
+            tabBarIcon: ({color, size}) => getTabIcon('Customers', color, size),
           })}
         />
       </Tab.Navigator>
