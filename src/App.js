@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppNavigator from './navigation/AppNavigator';
 import NetInfo from '@react-native-community/netinfo';
-import InternetStatus from './components/InternetStatus'; // Adjust the path
+import InternetStatus from './components/InternetStatus'; // Adjust the path change
 
 const Stack = createNativeStackNavigator();
 
