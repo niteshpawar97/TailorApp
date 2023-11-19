@@ -10,6 +10,7 @@ import Stock from '../views/Stock';
 import Customer from '../views/Customer';
 import NewOrder from '../views/NewOrder';
 import History from '../views/History';
+import Profile from '../views/Profile';
 import {KeyboardAvoidingView, Platform} from 'react-native'; // Import KeyboardAvoidingView
 import LottieView from 'lottie-react-native';
 import {
@@ -182,13 +183,7 @@ const AppNavigator = {
                 }}
               />
             ),
-            // tabBarIcon: ({color, size}) => (
-            //   <MaterialCommunityIcons
-            //     name="history"
-            //     color={color}
-            //     size={size}
-            //   />
-            // ),
+            
             tabBarIcon: ({color, size}) => getTabIcon('History', color, size),
           })}
         />
@@ -232,13 +227,6 @@ const AppNavigator = {
                 }}
               />
             ),
-            // tabBarIcon: ({color, size}) => (
-            //   <MaterialCommunityIcons
-            //     name="timetable"
-            //     color={color}
-            //     size={size}
-            //   />
-            // ),
             tabBarIcon: ({color, size}) =>
               getTabIcon('PayHistory', color, size),
           })}
@@ -283,9 +271,6 @@ const AppNavigator = {
                 }}
               />
             ),
-            // tabBarIcon: ({color, size}) => (
-            //   <MaterialCommunityIcons name="dolly" color={color} size={size} />
-            // ),
             tabBarIcon: ({color, size}) => getTabIcon('Stock', color, size),
           })}
         />
@@ -328,16 +313,54 @@ const AppNavigator = {
                 }}
               />
             ),
-            // tabBarIcon: ({color, size}) => (
-            //   <MaterialCommunityIcons
-            //     name="account-group"
-            //     color={color}
-            //     size={size}
-            //   />
-            // ),
             tabBarIcon: ({color, size}) => getTabIcon('Customers', color, size),
           })}
         />
+
+<Tab.Screen
+          name="Profile"
+          component={Profile}
+          options={({navigation}) => ({
+            headerTitle: 'Profile',
+            headerTintColor: '#FFFFFF', // Set the text color
+            headerStyle: {backgroundColor: '#495373'},
+            headerLeft: () => (
+              <MaterialCommunityIcons.Button
+                name="arrow-left"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your back button logic here
+                  navigation.goBack();
+                }}
+              />
+            ),
+            headerRight: () => (
+              <MaterialCommunityIcons.Button
+                name="logout"
+                backgroundColor="transparent"
+                color="white"
+                onPress={() => {
+                  // Implement your logout logic here
+                  try {
+                    // Clear user data from AsyncStorage
+                    AsyncStorage.removeItem('user');
+                    console.log('User data cleared from AsyncStorage.');
+
+                    // Navigate to the login or home screen
+                    navigation.navigate('Login'); // Replace 'Login' with your actual screen name
+                    console.log('Navigated to the Login screen.');
+                  } catch (error) {
+                    console.error('Error logging out:', error);
+                  }
+                }}
+              />
+            ),
+            
+            tabBarIcon: ({color, size}) => getTabIcon('Customers', color, size),
+          })}
+        />
+
       </Tab.Navigator>
     );
   },

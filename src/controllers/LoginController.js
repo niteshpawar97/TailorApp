@@ -7,7 +7,7 @@ import {
 } from '../helpers/apiRequestWithHeaders';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const {LOGIN_API, LOGOUT_API, USER_CHECK_API} = Config;
+const {LOGIN_API, LOGOUT_API, PWD_CHANGE_API, USER_CHECK_API} = Config;
 
 const LoginController = {
   login: async (username, password) => {
@@ -25,6 +25,22 @@ const LoginController = {
       }
 
       return response.user;
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+
+  pwdChange: async (oldpassword, newpassword) => {
+    console.log(PWD_CHANGE_API);
+    try {
+      const ChangePwdData = {oldpassword, newpassword}; // Define LoginData object
+      console.log(ChangePwdData);
+      const response = await sendPostRequest(PWD_CHANGE_API, ChangePwdData); // Make the POST request
+      console.log('POST Response:', response);
+      if (response.error) {
+        return response;
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }

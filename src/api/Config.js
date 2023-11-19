@@ -5,7 +5,8 @@ const API_BASE_URL      = 'http://64.226.115.230:3000/api';  // Replace with you
 const LOGIN_API         = `${API_BASE_URL}/login`; //POST
 const LOGOUT_API        = `${API_BASE_URL}/logout`; //get
 const USER_CHECK_API    = `${API_BASE_URL}/user`; //get
-const PWD_CHANGE_API    = `${API_BASE_URL}/changepwd`; //post data: {"oldpassword":"asdfg","newpassword":"asdf"}
+const PWD_CHANGE_API    = `${API_BASE_URL}/changepwd`; //post data: 
+// {"oldpassword":"asdfg","newpassword":"asdf"}
 
 const BASE_CLIENT_API   = `${API_BASE_URL}/client`; // Sub use client
 
