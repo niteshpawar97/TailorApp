@@ -2,11 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Card, Title} from 'react-native-paper';
+import {Card, TextInput, Title} from 'react-native-paper';
 import LoginController from '../controllers/LoginController'; // Import the checkLoginStatus function
 import ErrorPopup from '../components/ErrorPopup';
 import LottieView from 'lottie-react-native';
-
 
 function DashboardView() {
   const [user, setUser] = useState(null);
@@ -18,27 +17,27 @@ function DashboardView() {
   };
 
   useEffect(() => {
-  // Function to check the login status
-  const checkUserLoginStatus = async () => {
-    try {
-      const userData = await LoginController.checkLoginStatus(); // Use the checkLoginStatus function
-      if (userData.error) {
-        // Handle the case where the user is not logged in
-        // You can redirect to the login screen or perform other actions here
-        const logoutResponse = await LoginController.logout();
-        // Redirect to the login screen here
+    // Function to check the login status
+    const checkUserLoginStatus = async () => {
+      try {
+        const userData = await LoginController.checkLoginStatus(); // Use the checkLoginStatus function
+        if (userData.error) {
+          // Handle the case where the user is not logged in
+          // You can redirect to the login screen or perform other actions here
+          const logoutResponse = await LoginController.logout();
+          // Redirect to the login screen here
           // You can use navigation or any other method to navigate to the login screen
           navigation.navigate('Login'); // Replace 'Login' with your actual screen name
-        
-        console.log('Logout Response: ', logoutResponse);
-      } else {
-        // User is logged in; set the user data to the state
-        setUser(userData);
+
+          console.log('Logout Response: ', logoutResponse);
+        } else {
+          // User is logged in; set the user data to the state
+          setUser(userData);
+        }
+      } catch (error) {
+        setError(error.message); // Set the error message in state
       }
-    } catch (error) {
-      setError(error.message); // Set the error message in state
-    }
-  };
+    };
 
     // Function to fetch the user details from AsyncStorage
     const fetchUserDetails = async () => {
@@ -85,7 +84,6 @@ function DashboardView() {
             <View className="flex flex-row gap-2">
               <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                  
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
@@ -99,7 +97,6 @@ function DashboardView() {
 
               <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                  
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
@@ -113,7 +110,6 @@ function DashboardView() {
 
               <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                 
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
@@ -125,11 +121,8 @@ function DashboardView() {
                 </View>
               </Card>
 
-              
-
               <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                 
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
@@ -141,11 +134,8 @@ function DashboardView() {
                 </View>
               </Card>
 
-              
-
               <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
-                 
                   <View className="flex justify-end">
                     <Card.Content>
                       <Title className="pl-2 text-gray-900 text-xl pt-5">
@@ -156,27 +146,48 @@ function DashboardView() {
                   </View>
                 </View>
               </Card>
+            </View>
 
-              </View>
-
-              <View>
+            <View>
               <Text className="h-52 text-xl pl-5 pt-3 text-gray-700 bg-gray-300 mt-2 rounded-lg">
                 Recent Orders | Today
               </Text>
 
-              <LottieView source={require('../assets/lottie/home.json')} autoPlay loop />
+              <LottieView
+                source={require('../assets/lottie/home.json')}
+                autoPlay
+                loop
+              />
             </View>
 
-            <ErrorPopup
-          isVisible={error !== null}
-          errorMessage={error}
-          onClose={handleCloseError}
-        />
+            <TextInput
+              mode="outlined"
+              label="Example Test"
+              className="rounded-md mt-2 w-full"
+            />
+            <TextInput
+              mode="outlined"
+              label="Example Test"
+              className="rounded-md mt-2 w-full"
+            />
+            <TextInput
+              mode="outlined"
+              label="Example Test"
+              className="rounded-md mt-2 w-full"
+            />
+            <TextInput
+              mode="outlined"
+              label="Example Test"
+              className="rounded-md mt-2 w-full"
+            />
 
+            <ErrorPopup
+              isVisible={error !== null}
+              errorMessage={error}
+              onClose={handleCloseError}
+            />
           </View>
         </View>
-
-        
       </View>
     </ScrollView>
   );

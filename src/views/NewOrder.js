@@ -26,9 +26,11 @@ import {
   getDataFromAsyncStorage,
 } from '../helpers/DataToAsyncStorage';
 import {useFocusEffect} from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
-const {CUSTOMER_SEARCH, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API,} = Config;
+const {CUSTOMER_SEARCH, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API} =
+  Config;
 
 const NewOrderView = () => {
   // Set the displayName property for the functional component
@@ -110,8 +112,6 @@ const NewOrderView = () => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [invoiceDetails, setInvoiceDetails] = useState([]);
   const [isInvoicePrintVisible, setInvoicePrintVisible] = useState(false);
-
-
 
   const handleAddItem = () => {
     if (selectedMaterial === 'Stitching') {
@@ -348,11 +348,11 @@ const NewOrderView = () => {
 
   // Update the customer object
   const customer = {
-    name: name,               // Update with actual name value
-    mobile: parseInt(phone),  // Convert to integer
+    name: name, // Update with actual name value
+    mobile: parseInt(phone), // Convert to integer
     whatsapp: parseInt(whatsapp), // Convert to integer
   };
-   console.log(customer);
+  console.log(customer);
 
   const handleNext = async () => {
     // Handle each step *1*
@@ -468,12 +468,15 @@ const NewOrderView = () => {
     // Set order details here based on your logic or API call
     // For example, fetch order details using the order ID
     const orderUrl = `${Config.ORDER_DETAILS_API}?oid=${orderDetails.order_id}`;
-    
+
     try {
       const invoiceDetailsResponse = await sendGetRequest(orderUrl);
-  
+
       if (invoiceDetailsResponse.error) {
-        console.error('Error fetching invoice details:', invoiceDetailsResponse.message);
+        console.error(
+          'Error fetching invoice details:',
+          invoiceDetailsResponse.message,
+        );
         // Handle the error here
       } else {
         const updatedInvoiceDetails = invoiceDetailsResponse.data[0]; // Assuming the data is an array
@@ -487,507 +490,554 @@ const NewOrderView = () => {
       console.error('Error fetching order details:', error);
       // Handle the error here
     }
-    
   };
- 
+
   const handleNewOrder = () => {
     // Navigate to the "NewOrder" screen
     navigation.navigate('Home'); // Replace 'NewOrder' with the actual name of your NewOrder screen
     setOrderDetails(null);
   };
 
+  const paidHandleFocus = () => {
+    // When the TextInput is focused, select the text
+    setPaid(paid === '0' ? '' : paid);
+  };
+
+  const paidHandleChangeText = text => {
+    // Remove leading zeros
+    const sanitizedText = text.replace(/^0+/, '');
+
+    // Update the state when the user types a new value or clears the input
+    setPaid(sanitizedText === '' ? '0' : sanitizedText);
+  };
+
+  const disHandleFocus = () => {
+    // When the TextInput is focused, select the text
+    setDiscount(paid === '0' ? '' : paid);
+  };
+
+  const disHandleChangeText = text => {
+    // Remove leading zeros
+    const sanitizedText = text.replace(/^0+/, '');
+
+    // Update the state when the user types a new value or clears the input
+    setDiscount(sanitizedText === '' ? '0' : sanitizedText);
+  };
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}>
-      <View className="flex-1 flex-row bg-gray-200">
-        <View className="flex-1 items-center justify rounded-lg shadow-sm py-1 bg-gray-50">
-          <Text className="text-xl text-center font-semibold text-gray-900">
-            Order Details (Step {currentStep}/3)
-          </Text>
-
-          <View
-            className={
-              currentStep === 3
-                ? 'flex w-full flex-col gap-6'
-                : 'flex w-72 flex-col gap-6 pt-5'
-            }>
-            {currentStep === 1 && (
-              <TextInput
-                mode="outlined"
-                label="Phone Number"
-                className={
-                  suggestions.length > 0
-                    ? 'rounded-md w-full -mb-6'
-                    : 'rounded-md w-full mt-2'
-                }
-                placeholder="Phone"
-                // onChangeText={text => setPhone(text)}
-                onChangeText={handlePhoneChange} // Updated the onChangeText handler
-                value={phone}
-                keyboardType="phone-pad"
-              />
-            )}
-
-            {suggestions.length > 0 && currentStep === 1 && (
-              <FlatList
-                className="bg-gray-300 w-72"
-                data={suggestions}
-                keyExtractor={item => item.mobile.toString()}
-                renderItem={({item}) => (
-                  <TouchableOpacity
-                    onPress={() => handleSelectSuggestion(item)}>
-                    <View className="border border-gray-400 px-4 py-1">
-                      <Text className="text-base text-gray-800">
-                        {item.mobile}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-              />
-            )}
-
-            {currentStep === 1 && (
-              <TextInput
-                mode="outlined"
-                label="Full Name"
-                className="rounded-md mt-2 w-full"
-                onChangeText={text => setName(text)}
-                value={name}
-                placeholder="Full Name"
-              />
-            )}
-
-            {currentStep === 1 && (
-              <TextInput
-                mode="outlined"
-                label="WhatsApp Number"
-                className="rounded-md mt-2 w-full"
-                placeholder="WhatsApp"
-                onChangeText={text => setWhatsApp(text)}
-                value={whatsapp}
-                keyboardType="phone-pad"
-              />
-            )}
-
-            {currentStep === 2 && (
-              // Render step 2 fields
-
-              <View className="gap-4">
-                <Text className="text-lg text-gray-950 px-6">
-                  Select-Material
-                </Text>
-
-                <RadioButton.Group
-                  onValueChange={value => {
-                    setSelectedMaterial(value);
-                    setProductItemsByMaterial(value); // Call the function with the selectedMaterial
-                  }}
-                  value={selectedMaterial}>
-                  <View className="flex flex-row justify-between text-gray-950">
-                    <RadioButton.Item
-                      position="leading"
-                      label="Ready Made"
-                      value="Ready Made"
-                    />
-                    <RadioButton.Item
-                      position="leading"
-                      label="Stitching"
-                      value="Stitching"
-                    />
-                  </View>
-                  <View className="flex flex-row justify-between">
-                    <RadioButton.Item
-                      position="leading"
-                      label="Sale Material"
-                      value="Sale Material"
-                    />
-                    <RadioButton.Item
-                      position="leading"
-                      label="Accessories"
-                      value="Accessories"
-                    />
-                  </View>
-                </RadioButton.Group>
-
-                <View className="flex flex-row justify-between">
-                  <DropDownPicker
-                    open={open}
-                    value={product}
-                    items={productitems.map(product => ({
-                      label: product.name,
-                      value: product.id, // Set the entire product object as the value
-                    }))}
-                    setOpen={setOpen}
-                    setValue={setProduct}
-                    setItems={() => {}}
-                    placeholder="Select Product"
-                    placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
-                    disableBorderRadius={false}
-                    showArrowIcon={false}
-                    showTickIcon={true}
-                    theme="LIGHT"
-                    autoScroll
-                    dropDownDirection="TOP"
-                  />
-                </View>
-                {selectedMaterial === 'Stitching' ? null : (
-                  <View className="flex flex-row justify-between">
-                    <DropDownPicker
-                      open={opensize}
-                      value={size}
-                      items={sizes}
-                      setOpen={setOpenSize}
-                      setValue={setSize}
-                      setItems={setSizes}
-                      placeholder="Select Size"
-                      disableBorderRadius={false}
-                      autoScroll
-                      placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
-                      showArrowIcon={false}
-                      theme="LIGHT"
-                      dropDownDirection="TOP"
-                    />
-                  </View>
-                )}
-
-                {selectedMaterial === 'Stitching' ? (
-                  <View>
-                    <TextInput
-                      mode="outlined"
-                      label="New MP Name"
-                      className="rounded-md mt-2 w-full"
-                      onChangeText={text => setNewMpName(text)}
-                      value={newMpName}
-                      placeholder="New MP Name"
-                    />
-
-                    <TextInput
-                      mode="outlined"
-                      label="Measurement"
-                      className="rounded-md mt-2 w-full"
-                      onChangeText={text => setMeasurement(text)}
-                      value={measurement}
-                      multiline={true} // Multiline prop for a comment box type input
-                      numberOfLines={3} // Number of lines to display (adjust as needed)
-                    />
-                  </View>
-                ) : null}
-
+    <SafeAreaView className="flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}>
+        <View className="flex-1 flex-row bg-gray-200">
+          <View className="flex-1 items-center justify rounded-lg shadow-sm py-1 bg-gray-50">
+            <View>
+              <Text className="text-xl text-center font-semibold text-gray-900">
+                Order Details (Step {currentStep}/3)
+              </Text>
+            </View>
+            <View
+              className={
+                currentStep === 3
+                  ? 'flex w-full flex-col gap-6'
+                  : 'flex w-72 flex-col gap-6 pt-5'
+              }>
+              {currentStep === 1 && (
                 <View>
                   <TextInput
                     mode="outlined"
-                    label="Quantity"
-                    className="rounded-md mt-2 w-full"
-                    // Add the onChangeText and value for step 2
-                    onChangeText={text => setQuantity(text)}
-                    value={quantity}
+                    label="Phone Number"
+                    className={
+                      suggestions.length > 0
+                        ? 'rounded-md w-full -mb-6'
+                        : 'rounded-md w-full mt-2'
+                    }
+                    placeholder="Phone"
+                    // onChangeText={text => setPhone(text)}
+                    onChangeText={handlePhoneChange} // Updated the onChangeText handler
+                    value={phone}
                     keyboardType="phone-pad"
                   />
                 </View>
+              )}
 
-                <TouchableOpacity
-                  className="bg-lime-600 text-white font-bold py-2 px-4 rounded-md"
-                  onPress={handleAddItem}>
-                  <Text className="text-center text-gray-200 font-semibold text-xl">
-                    Add Item
+              {suggestions.length > 0 && currentStep === 1 && (
+                <FlatList
+                  className="bg-gray-200"
+                  data={suggestions}
+                  keyExtractor={item => item.mobile.toString()}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      onPress={() => handleSelectSuggestion(item)}>
+                      <View className="border border-gray-400 px-4 py-1">
+                        <Text className="text-base text-gray-800">
+                          {item.mobile}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                />
+              )}
+
+              {currentStep === 1 && (
+                <View>
+                  <TextInput
+                    mode="outlined"
+                    label="Full Name"
+                    className="rounded-md mt-2 w-full"
+                    onChangeText={text => setName(text)}
+                    value={name}
+                    placeholder="Full Name"
+                  />
+                </View>
+              )}
+
+              {currentStep === 1 && (
+                <View>
+                  <TextInput
+                    mode="outlined"
+                    label="WhatsApp Number"
+                    className="rounded-md mt-2 w-full"
+                    placeholder="WhatsApp"
+                    onChangeText={text => setWhatsApp(text)}
+                    value={whatsapp}
+                    keyboardType="phone-pad"
+                  />
+                </View>
+              )}
+
+              {currentStep === 2 && (
+                // Render step 2 fields
+                <View className="gap-4">
+                  <Text className="text-lg text-gray-950 px-6">
+                    Select-Material
                   </Text>
-                </TouchableOpacity>
-              </View>
-            )}
 
-            {currentStep === 3 && (
-              // Items Show added
-              <ScrollView>
-                <View className="px-6 py-2 w-full text-center rounded-md bg-gray-100">
-                  <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
-                    Order Confirmation
-                  </Text>
+                  <RadioButton.Group
+                    onValueChange={value => {
+                      setSelectedMaterial(value);
+                      setProductItemsByMaterial(value); // Call the function with the selectedMaterial
+                    }}
+                    value={selectedMaterial}>
+                    <View className="flex flex-row justify-between text-gray-950">
+                      <RadioButton.Item
+                        position="leading"
+                        label="Ready Made"
+                        value="Ready Made"
+                      />
+                      <RadioButton.Item
+                        position="leading"
+                        label="Stitching"
+                        value="Stitching"
+                      />
+                    </View>
+                    <View className="flex flex-row justify-between">
+                      <RadioButton.Item
+                        position="leading"
+                        label="Sale Material"
+                        value="Sale Material"
+                      />
+                      <RadioButton.Item
+                        position="leading"
+                        label="Accessories"
+                        value="Accessories"
+                      />
+                    </View>
+                  </RadioButton.Group>
 
-                  <View className="flex flex-row justify-end items-center pt-4">
-                    <Text className="w-1/4 border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      Delivery Date
-                    </Text>
+                  <View className="flex flex-row justify-between">
+                    <DropDownPicker
+                      open={open}
+                      value={product}
+                      items={productitems.map(product => ({
+                        label: product.name,
+                        value: product.id, // Set the entire product object as the value
+                      }))}
+                      setOpen={setOpen}
+                      setValue={setProduct}
+                      setItems={() => {}}
+                      placeholder="Select Product"
+                      placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
+                      disableBorderRadius={false}
+                      showArrowIcon={false}
+                      showTickIcon={true}
+                      theme="LIGHT"
+                      autoScroll
+                      dropDownDirection="TOP"
+                    />
+                  </View>
+                  {selectedMaterial === 'Stitching' ? null : (
+                    <View className="flex flex-row justify-between">
+                      <DropDownPicker
+                        open={opensize}
+                        value={size}
+                        items={sizes}
+                        setOpen={setOpenSize}
+                        setValue={setSize}
+                        setItems={setSizes}
+                        placeholder="Select Size"
+                        disableBorderRadius={false}
+                        autoScroll
+                        placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
+                        showArrowIcon={false}
+                        theme="LIGHT"
+                        dropDownDirection="TOP"
+                      />
+                    </View>
+                  )}
 
-                    <View className="flex-row w-1/4 h-14 border py-1 px-1 border-gray-500">
-                    <TouchableWithoutFeedback onPress={showDatePicker}>
+                  {selectedMaterial === 'Stitching' ? (
                     <View>
                       <TextInput
                         mode="outlined"
-                        value={dDate} // Display the selected date
-                        onFocus={showDatePicker} // Show the date picker when the input is touched
-                        className="flex-1 w-32"
-                        editable={false}
-                        
+                        label="New MP Name"
+                        className="rounded-md mt-2 w-full"
+                        onChangeText={text => setNewMpName(text)}
+                        value={newMpName}
+                        placeholder="New MP Name"
                       />
-                      </View>
-                          </TouchableWithoutFeedback>
-                      <IconButton
-                        icon="calendar"
-                        color="#000"
-                        size={24}
-                        onPress={showDatePicker}
+
+                      <TextInput
+                        mode="outlined"
+                        label="Measurement"
+                        className="rounded-md mt-2 w-full"
+                        onChangeText={text => setMeasurement(text)}
+                        value={measurement}
+                        multiline={true} // Multiline prop for a comment box type input
+                        numberOfLines={3} // Number of lines to display (adjust as needed)
                       />
                     </View>
-                    <DateTimePickerModal
-                      isVisible={isDatePickerVisible}
-                      mode="date" // You can change this to "datetime" for date and time
-                      onConfirm={handleDateConfirm}
-                      onCancel={hideDatePicker}
+                  ) : null}
+
+                  <View>
+                    <TextInput
+                      mode="outlined"
+                      label="Quantity"
+                      className="rounded-md mt-2 w-full"
+                      // Add the onChangeText and value for step 2
+                      onChangeText={text => setQuantity(text)}
+                      value={quantity}
+                      keyboardType="phone-pad"
                     />
                   </View>
 
-                  <View className="flex flex-row justify-end items-center">
-                    <Text className="w-1/4 border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      Grand Total
+                  <TouchableOpacity
+                    className="bg-lime-600 text-white font-bold py-2 px-4 rounded-md"
+                    onPress={handleAddItem}>
+                    <Text className="text-center text-gray-200 font-semibold text-xl">
+                      Add Item
                     </Text>
-                    <Text className="w-1/4  border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      QAR {grandTotal}
-                    </Text>
-                  </View>
-
-                  <View className="flex flex-row justify-end items-center">
-                    <Text className="w-1/4 border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      Discount
-                    </Text>
-                    <View className="flex-row w-1/4 h-14 border py-1 px-1 border-gray-500">
-                      <TextInput
-                        mode="outlined"
-                        className="rounded-md w-40"
-                        // Add the onChangeText and value for step 3
-                        onChangeText={text => setDiscount(text)}
-                        value={discount}
-                        keyboardType="phone-pad"
-                      />
-                    </View>
-                  </View>
-
-                  <View className="flex flex-row justify-end items-center">
-                    <Text className="w-1/4 border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      Pay Total
-                    </Text>
-                    <Text className="w-1/4  border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      QAR {finalTotal}
-                    </Text>
-                  </View>
-
-                  <View className="flex flex-row justify-end items-center">
-                    <Text className="w-1/4 border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      Pay Mode
-                    </Text>
-
-                    <RadioButton.Group
-                      onValueChange={value => setPaidmode(value)}
-                      value={paidmode}>
-                      <View className="flex-row w-44 border border-gray-500">
-                        <RadioButton.Item
-                          position="leading"
-                          label="Card"
-                          value="card"
-                        />
-                        <RadioButton.Item
-                          position="leading"
-                          label="Cash"
-                          value="cash"
-                        />
-                      </View>
-                    </RadioButton.Group>
-                  </View>
-
-                  <View className="flex flex-row justify-end items-center">
-                    <Text className="w-1/4 border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      Paid
-                    </Text>
-
-                    <View className="flex-row w-1/4 h-14 border py-1 px-1 border-gray-500">
-                      <TextInput
-                        mode="outlined"
-                        className="rounded-md w-40"
-                        // Add the onChangeText and value for step 3
-                        onChangeText={text => setPaid(text)}
-                        value={paid}
-                        keyboardType="phone-pad"
-                      />
-                    </View>
-                  </View>
-
-                  <View className="flex flex-row justify-end items-center">
-                    <Text className="w-1/4 border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      Balance
-                    </Text>
-                    <Text className="w-1/4  border py-1 px-2 border-gray-500  text-gray-950 font-extrabold">
-                      QAR {finalBalance}
-                    </Text>
-                  </View>
-
+                  </TouchableOpacity>
                 </View>
-              </ScrollView>
-            )}
-
-            <View className="flex flex-row justify-between">
-              {currentStep > 1 && (
-                <TouchableOpacity
-                  className="bg-gray-300 text-white font-bold py-2 px-4 rounded-md"
-                  onPress={handleBack}>
-                  <Text className="text-center text-gray-800 font-semibold text-xl">
-                    Back
-                  </Text>
-                </TouchableOpacity>
               )}
 
-              <TouchableOpacity
-                className="bg-gray-800 w-44 text-white font-bold py-2 px-4 rounded-md"
-                onPress={handleNext}>
-                <Text className="text-center text-gray-50 font-semibold text-xl">
-                  {isLoading
-                    ? 'Processing...'
-                    : currentStep === 3
-                    ? 'Order Confirm'
-                    : currentStep === 2
-                    ? 'Next'
-                    : 'Next'}
-                </Text>
-              </TouchableOpacity>
-            </View>
+              {currentStep === 3 && (
+                // Items Show added
+                <ScrollView>
+                  <View className="px-6 py-2 w-full text-center rounded-md bg-gray-100">
+                    <Text className="text text-xl p-2 bg-gray-200 text-green-500 font-bold">
+                      Order Confirmation
+                    </Text>
 
-            <ErrorPopup
-              isVisible={error !== null}
-              errorMessage={error}
-              onClose={handleCloseError}
-            />
+                    <View className="flex flex-row mt-2">
+                      <View className="flex-1 justify-between">
+                        {/* <Text>Side 1 </Text> */}
 
-            {/* Conditionally render Order Success Popup */}
-            {orderDetails?.order_id && (
-              <OrderSuccessPopup
-                isVisible={isSuccessModalVisible}
-                orderDetails={orderDetails}
-                onClose={handleNewOrder}
-                onOrderPrint={handleOrderPrint}
-                onInvoicePrint={handleInvoicePrint}
-                isLoading={isLoading}
-                invoiceDetails={invoiceDetails}
-                isInvoicePrintVisible={isInvoicePrintVisible}
-              />
-            )}
-          </View>
-        </View>
+                        <Text className="  py-1 px-2 text-gray-950 font-extrabold">
+                          Delivery Date
+                        </Text>
 
-        {currentStep === 2 && (
-          <View className="flex-1 justify items bg-gray-100 px-2">
-            <Text className="text text-xl p-2 bg-gray-50 text-gray-900 font-bold">
-              Seleted Items
-            </Text>
+                        <Text className=" py-1 px-2 text-gray-950 font-extrabold">
+                          Grand Total
+                        </Text>
+                        <Text className="py-1 px-2 text-gray-950 font-extrabold">
+                          Discount
+                        </Text>
+                        <Text className="py-1 px-2  text-gray-950 font-extrabold">
+                          Pay Total
+                        </Text>
+                        <Text className="py-1 px-2 text-gray-950 font-extrabold">
+                          Pay Mode
+                        </Text>
+                        <Text className="py-1 px-2 text-gray-950 font-extrabold">
+                          Paid
+                        </Text>
+                        <Text className="py-1 px-2 text-gray-950 font-extrabold">
+                          Balance
+                        </Text>
+                      </View>
 
-            <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-              <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
-              <Text className="w-1/6 text-gray-950 font-extrabold">
-                Item Name
-              </Text>
-              <Text className="w-1/6 text-gray-950 font-extrabold">
-                Dress Type
-              </Text>
-              <Text className="w-1/12  text-gray-950 font-extrabold">Size</Text>
-              <Text className="w-1/12  text-gray-950 font-extrabold">Qty</Text>
-              <Text className="w-1/12  text-gray-950 font-extrabold">
-                Price
-              </Text>
-              <Text className="w-1/6 text-gray-950 font-extrabold">Total</Text>
-              {/* <Text className="w-1/6 text-gray-950 font-extrabold">Amount</Text> */}
-              <Text className="w-1/8 text-gray-700 font-extrabold">Action</Text>
-            </View>
+                      <View className="flex-1 justify-between">
+                        {/* <Text>Side 2 </Text> */}
 
-            {selectedItems.map((item, index) => (
-              <View
-                key={index}
-                className="flex flex-row justify-between items-center bg-gray-100 border py-1 px-3">
-                <Text className="w-1/12 text-zinc-700 font-extrabold">
-                  {index + 1}
-                </Text>
-                <Text className="w-1/6 text-zinc-700 font-semibold">
-                  {item.dress_name ? item.dress_name : 'N/A'}
-                </Text>
-                <Text className="w-1/6 text-zinc-700 font-semibold">
-                  {item.dress_type}
-                </Text>
-                <Text className="w-1/12 text-zinc-700 font-semibold">
-                  {item.size}
-                </Text>
-                <Text className="w-1/12 text-zinc-700 font-semibold">
-                  {item.quantity}
-                </Text>
-                <Text className="w-1/12 text-zinc-700 font-semibold">
-                  {item.price}
-                </Text>
+                        <View className="flex-row h-14  py-1 px-1 ">
+                          <TouchableWithoutFeedback onPress={showDatePicker}>
+                            <View>
+                              <TextInput
+                                mode="outlined"
+                                value={dDate} // Display the selected date
+                                onFocus={showDatePicker} // Show the date picker when the input is touched
+                                className="flex-1 w-40"
+                                editable={false}
+                              />
+                            </View>
+                          </TouchableWithoutFeedback>
+                          <IconButton
+                            icon="calendar"
+                            color="#000"
+                            size={24}
+                            onPress={showDatePicker}
+                          />
+                        </View>
+                        <DateTimePickerModal
+                          isVisible={isDatePickerVisible}
+                          mode="date" // You can change this to "datetime" for date and time
+                          // date={selectedDate}
+                          minimumDate={new Date()} // Set minimum date to the current date
+                          onConfirm={handleDateConfirm}
+                          onCancel={hideDatePicker}
+                        />
 
-                <Text className="w-1/6 text-zinc-700 font-semibold">
-                  {item.total}
-                </Text>
-                {/* Button to remove this item */}
-                <TouchableOpacity onPress={() => handleRemoveItem(index)}>
-                  <Text className="bg-gray-700 w-1/8 text-white font-bold
-                  px-2 py-1 rounded-md">
-                    Remove
+                        <Text className="py-1 px-2 text-lg  text-gray-500 font-extrabold">
+                          QAR {grandTotal}
+                        </Text>
+
+                        <View className="flex-row h-14 py-1 px-1 ">
+                          
+                          <TextInput
+                            mode="outlined"
+                            className="rounded-md w-40 text-green-600"
+                            // Add the onChangeText and value for step 3
+                            // onChangeText={text => setPaid(text)}
+                            onChangeText={disHandleChangeText}
+                            value={discount}
+                            onFocus={disHandleFocus}
+                            keyboardType="phone-pad"
+                          />
+                        </View>
+                        <Text className="py-1 px-2 text-xl text-gray-800 font-extrabold">
+                          QAR {finalTotal}
+                        </Text>
+
+                        <RadioButton.Group
+                          onValueChange={value => setPaidmode(value)}
+                          value={paidmode}>
+                          <View className="flex-row">
+                            <RadioButton.Item
+                              position="leading"
+                              label="Card"
+                              value="card"
+                            />
+                            <RadioButton.Item
+                              position="leading"
+                              label="Cash"
+                              value="cash"
+                            />
+                          </View>
+                        </RadioButton.Group>
+
+                        <View className="flex-row h-14 py-1 px-1 ">
+                          <TextInput
+                            mode="outlined"
+                            className="rounded-md w-40 text-green-600"
+                            // Add the onChangeText and value for step 3
+                            // onChangeText={text => setPaid(text)}
+                            onChangeText={paidHandleChangeText}
+                            value={paid}
+                            onFocus={paidHandleFocus}
+                            keyboardType="phone-pad"
+                          />
+                        </View>
+
+                        <Text className="py-1 px-2  text-2xl text-red-700 font-extrabold">
+                          QAR {finalBalance}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </ScrollView>
+              )}
+
+              <View className="flex flex-row justify-between">
+                {currentStep > 1 && (
+                  <TouchableOpacity
+                    className="bg-gray-300 text-white font-bold py-2 px-4 rounded-md"
+                    onPress={handleBack}>
+                    <Text className="text-center text-gray-800 font-semibold text-xl">
+                      Back
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                <TouchableOpacity
+                  className="bg-gray-800 w-44 text-white font-bold py-2 px-4 rounded-md"
+                  onPress={handleNext}>
+                  <Text className="text-center text-gray-50 font-semibold text-xl">
+                    {isLoading
+                      ? 'Processing...'
+                      : currentStep === 3
+                      ? 'Order Confirm'
+                      : currentStep === 2
+                      ? 'Next'
+                      : 'Next'}
                   </Text>
                 </TouchableOpacity>
               </View>
-            ))}
-          </View>
-        )}
 
-        {currentStep === 3 && (
-          <View className="flex-1 justify items bg-gray-100 px-2">
-            <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
-              Order Items Confirmation
-            </Text>
+              <ErrorPopup
+                isVisible={error !== null}
+                errorMessage={error}
+                onClose={handleCloseError}
+              />
 
-            <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-              <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
-              <Text className="w-1/6 text-gray-950 font-extrabold">
-                Item Name
-              </Text>
-              <Text className="w-1/6 text-gray-950 font-extrabold">
-                Dress Type
-              </Text>
-              <Text className="w-1/12  text-gray-950 font-extrabold">Size</Text>
-              <Text className="w-1/12  text-gray-950 font-extrabold">Qty</Text>
-              <Text className="w-1/12  text-gray-950 font-extrabold">
-                Price
-              </Text>
-              <Text className="w-1/6 text-gray-950 font-extrabold">Total</Text>
+              {/* Conditionally render Order Success Popup */}
+              {orderDetails?.order_id && (
+                <OrderSuccessPopup
+                  isVisible={isSuccessModalVisible}
+                  orderDetails={orderDetails}
+                  onClose={handleNewOrder}
+                  onOrderPrint={handleOrderPrint}
+                  onInvoicePrint={handleInvoicePrint}
+                  isLoading={isLoading}
+                  invoiceDetails={invoiceDetails}
+                  isInvoicePrintVisible={isInvoicePrintVisible}
+                />
+              )}
             </View>
+          </View>
 
-            {selectedItems.map((item, index) => (
-              <View
-                key={index}
-                className="flex flex-row justify-between items-center bg-gray-100 border py-2 px-3">
-                <Text className="w-1/12 text-zinc-700 font-extrabold">
-                  {index + 1}
-                </Text>
-                <Text className="w-1/6 text-zinc-700 font-semibold">
-                  {item.dress_name ? item.dress_name : 'N/A'}
-                </Text>
-                <Text className="w-1/6 text-zinc-700 font-semibold">
-                  {item.dress_type}
-                </Text>
-                <Text className="w-1/12 text-zinc-700 font-semibold">
-                  {item.size}
-                </Text>
-                <Text className="w-1/12 text-zinc-700 font-semibold">
-                  {item.quantity}
-                </Text>
-                <Text className="w-1/12 text-zinc-700 font-semibold">
-                  {item.price}
-                </Text>
+          {currentStep === 2 && (
+            <View className="flex-1 justify items bg-gray-100 px-2">
+              <Text className="text text-xl p-2 bg-gray-50 text-gray-900 font-bold">
+                Seleted Items
+              </Text>
 
-                <Text className="w-1/6 text-zinc-700 font-semibold">
-                  {item.total}
+              <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
+                <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
+                <Text className="w-1/6 text-gray-950 font-extrabold">
+                  Item Name
+                </Text>
+                <Text className="w-1/6 text-gray-950 font-extrabold">
+                  Dress Type
+                </Text>
+                <Text className="w-1/12  text-gray-950 font-extrabold">
+                  Size
+                </Text>
+                <Text className="w-1/12  text-gray-950 font-extrabold">
+                  Qty
+                </Text>
+                <Text className="w-1/12  text-gray-950 font-extrabold">
+                  Price
+                </Text>
+                <Text className="w-1/6 text-gray-950 font-extrabold">
+                  Total
+                </Text>
+                {/* <Text className="w-1/6 text-gray-950 font-extrabold">Amount</Text> */}
+                <Text className="w-1/8 text-gray-700 font-extrabold">
+                  Action
                 </Text>
               </View>
-            ))}
-          </View>
-        )}
-      </View>
-    </KeyboardAvoidingView>
+
+              {selectedItems.map((item, index) => (
+                <View
+                  key={index}
+                  className="flex flex-row justify-between items-center bg-gray-100 border py-1 px-3">
+                  <Text className="w-1/12 text-zinc-700 font-extrabold">
+                    {index + 1}
+                  </Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    {item.dress_name ? item.dress_name : 'N/A'}
+                  </Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    {item.dress_type}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.size}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.quantity}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.price}
+                  </Text>
+
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    {item.total}
+                  </Text>
+                  {/* Button to remove this item */}
+                  <TouchableOpacity onPress={() => handleRemoveItem(index)}>
+                    <Text
+                      className="bg-gray-700 w-1/8 text-white font-bold
+                  px-2 py-1 rounded-md">
+                      Remove
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {currentStep === 3 && (
+            <View className="flex-1 justify items bg-gray-100 px-2">
+              <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
+                Order Items Confirmation
+              </Text>
+
+              <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
+                <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
+                <Text className="w-1/6 text-gray-950 font-extrabold">
+                  Item Name
+                </Text>
+                <Text className="w-1/6 text-gray-950 font-extrabold">
+                  Dress Type
+                </Text>
+                <Text className="w-1/12  text-gray-950 font-extrabold">
+                  Size
+                </Text>
+                <Text className="w-1/12  text-gray-950 font-extrabold">
+                  Qty
+                </Text>
+                <Text className="w-1/12  text-gray-950 font-extrabold">
+                  Price
+                </Text>
+                <Text className="w-1/6 text-gray-950 font-extrabold">
+                  Total
+                </Text>
+              </View>
+
+              {selectedItems.map((item, index) => (
+                <View
+                  key={index}
+                  className="flex flex-row justify-between items-center bg-gray-100 border py-2 px-3">
+                  <Text className="w-1/12 text-zinc-700 font-extrabold">
+                    {index + 1}
+                  </Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    {item.dress_name ? item.dress_name : 'N/A'}
+                  </Text>
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    {item.dress_type}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.size}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.quantity}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.price}
+                  </Text>
+
+                  <Text className="w-1/6 text-zinc-700 font-semibold">
+                    {item.total}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
