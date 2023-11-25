@@ -160,27 +160,6 @@ function DashboardView() {
               />
             </View>
 
-            <TextInput
-              mode="outlined"
-              label="Example Test"
-              className="rounded-md mt-2 w-full"
-            />
-            <TextInput
-              mode="outlined"
-              label="Example Test"
-              className="rounded-md mt-2 w-full"
-            />
-            <TextInput
-              mode="outlined"
-              label="Example Test"
-              className="rounded-md mt-2 w-full"
-            />
-            <TextInput
-              mode="outlined"
-              label="Example Test"
-              className="rounded-md mt-2 w-full"
-            />
-
             <ErrorPopup
               isVisible={error !== null}
               errorMessage={error}

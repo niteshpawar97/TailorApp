@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   FlatList,
+  SectionList,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -28,6 +29,7 @@ import {
 import {useFocusEffect} from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {LogBox} from 'react-native';
 
 const {CUSTOMER_SEARCH, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API} =
   Config;
@@ -256,6 +258,8 @@ const NewOrderView = () => {
 
   useEffect(
     () => {
+      LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
       if (phone.length >= 4) {
         if (currentStep === 1) {
           // Fetch suggestions when the phone number input has 4 or more characters
@@ -288,7 +292,7 @@ const NewOrderView = () => {
 
         console.log('GET CUSTOMER_SEARCH:', url);
         const data = await sendGetRequest(url);
-        console.log('GET Response:', data);
+        console.log('GET Response:', data.customer);
         if (data.error === false) {
           setSuggestions(data.customer);
         }
@@ -526,16 +530,27 @@ const NewOrderView = () => {
 
   return (
     <SafeAreaView className="flex-1">
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
-        <View className="flex-1 flex-row bg-gray-200">
-          <View className="flex-1 items-center justify rounded-lg shadow-sm py-1 bg-gray-50">
-            <View>
-              <Text className="text-xl text-center font-semibold text-gray-900">
-                Order Details (Step {currentStep}/3)
-              </Text>
-            </View>
+        style={styles.container}> */}
+
+      <ScrollView>
+        <View className="">
+          <View className="bg-white border m-1">
+            <Text className="text-2xl text-center font-semibold text-gray-400 py-1">
+              Enter Details To Create New Order.
+            </Text>
+          </View>
+          <View className="bg-gray-200 rounded-sm p-1 items-center">
+            <Text className="text-xl bg-white p-1 w-72 rounded-md text-center font-semibold text-gray-900">
+              {currentStep === 1 && 'Customer Details'}
+              {currentStep === 2 && 'Select Products'}
+              {currentStep === 3 && 'Billing Details'} (Step {currentStep}/3)
+            </Text>
+          </View>
+        </View>
+        <View className="flex-1 flex-row">
+          <View className="flex-1 items-center justify">
             <View
               className={
                 currentStep === 3
@@ -562,21 +577,21 @@ const NewOrderView = () => {
               )}
 
               {suggestions.length > 0 && currentStep === 1 && (
-                <FlatList
-                  className="bg-gray-200"
-                  data={suggestions}
-                  keyExtractor={item => item.mobile.toString()}
-                  renderItem={({item}) => (
-                    <TouchableOpacity
-                      onPress={() => handleSelectSuggestion(item)}>
-                      <View className="border border-gray-400 px-4 py-1">
-                        <Text className="text-base text-gray-800">
-                          {item.mobile}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                />
+                <View>
+                  <ScrollView className="bg-gray-200">
+                    {suggestions.map((item, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => handleSelectSuggestion(item)}>
+                        <View className="border border-gray-400 px-4 py-1">
+                          <Text className="text-base text-gray-800">
+                            {item.mobile}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
               )}
 
               {currentStep === 1 && (
@@ -608,42 +623,42 @@ const NewOrderView = () => {
 
               {currentStep === 2 && (
                 // Render step 2 fields
-                <View className="gap-4">
-                  <Text className="text-lg text-gray-950 px-6">
-                    Select-Material
-                  </Text>
+                <View className="flex-1 justify items bg-gray-100 gap-2">
+                
+                  <View className="flex justify-start ">
+                    <RadioButton.Group
+                      onValueChange={value => {
+                        setSelectedMaterial(value);
+                        setProductItemsByMaterial(value); // Call the function with the selectedMaterial
+                      }}
+                      value={selectedMaterial}>
+                      <View className="flex flex-row text-gray-950">
+                        <RadioButton.Item
+                          position="leading"
+                          label="Ready Made"
+                          value="Ready Made"
+                        />
+                        <RadioButton.Item
+                          position="leading"
+                          label="Stitching"
+                          value="Stitching"
+                        />
+                      </View>
+                      <View className="flex flex-row text-gray-950">
 
-                  <RadioButton.Group
-                    onValueChange={value => {
-                      setSelectedMaterial(value);
-                      setProductItemsByMaterial(value); // Call the function with the selectedMaterial
-                    }}
-                    value={selectedMaterial}>
-                    <View className="flex flex-row justify-between text-gray-950">
                       <RadioButton.Item
-                        position="leading"
-                        label="Ready Made"
-                        value="Ready Made"
-                      />
-                      <RadioButton.Item
-                        position="leading"
-                        label="Stitching"
-                        value="Stitching"
-                      />
-                    </View>
-                    <View className="flex flex-row justify-between">
-                      <RadioButton.Item
-                        position="leading"
-                        label="Sale Material"
-                        value="Sale Material"
-                      />
-                      <RadioButton.Item
-                        position="leading"
-                        label="Accessories"
-                        value="Accessories"
-                      />
-                    </View>
-                  </RadioButton.Group>
+                          position="leading"
+                          label="Sale Material"
+                          value="Sale Material"
+                        />
+                        <RadioButton.Item
+                          position="leading"
+                          label="Accessories"
+                          value="Accessories"
+                        />
+                      </View>
+                    </RadioButton.Group>
+                  </View>
 
                   <View className="flex flex-row justify-between">
                     <DropDownPicker
@@ -691,7 +706,7 @@ const NewOrderView = () => {
                       <TextInput
                         mode="outlined"
                         label="New MP Name"
-                        className="rounded-md mt-2 w-full"
+                        className="rounded-md w-full"
                         onChangeText={text => setNewMpName(text)}
                         value={newMpName}
                         placeholder="New MP Name"
@@ -700,7 +715,7 @@ const NewOrderView = () => {
                       <TextInput
                         mode="outlined"
                         label="Measurement"
-                        className="rounded-md mt-2 w-full"
+                        className="rounded-md mt-1 w-full"
                         onChangeText={text => setMeasurement(text)}
                         value={measurement}
                         multiline={true} // Multiline prop for a comment box type input
@@ -713,7 +728,7 @@ const NewOrderView = () => {
                     <TextInput
                       mode="outlined"
                       label="Quantity"
-                      className="rounded-md mt-2 w-full"
+                      className="rounded-md mb-2 w-full"
                       // Add the onChangeText and value for step 2
                       onChangeText={text => setQuantity(text)}
                       value={quantity}
@@ -722,9 +737,9 @@ const NewOrderView = () => {
                   </View>
 
                   <TouchableOpacity
-                    className="bg-lime-600 text-white font-bold py-2 px-4 rounded-md"
+                    className="bg-lime-500 text-white font-bold py-2 px-4 rounded-md"
                     onPress={handleAddItem}>
-                    <Text className="text-center text-gray-200 font-semibold text-xl">
+                    <Text className="text-center text-white font-semibold text-xl">
                       Add Item
                     </Text>
                   </TouchableOpacity>
@@ -767,7 +782,7 @@ const NewOrderView = () => {
                         </Text>
                       </View>
 
-                      <View className="flex-1 justify-between">
+                      <View className="flex-1 justify-between items-end">
                         {/* <Text>Side 2 </Text> */}
 
                         <View className="flex-row h-14  py-1 px-1 ">
@@ -775,6 +790,8 @@ const NewOrderView = () => {
                             <View>
                               <TextInput
                                 mode="outlined"
+                                label="Delivery Date"
+                                placeholder="Delivery Date"
                                 value={dDate} // Display the selected date
                                 onFocus={showDatePicker} // Show the date picker when the input is touched
                                 className="flex-1 w-40"
@@ -803,7 +820,6 @@ const NewOrderView = () => {
                         </Text>
 
                         <View className="flex-row h-14 py-1 px-1 ">
-                          
                           <TextInput
                             mode="outlined"
                             className="rounded-md w-40 text-green-600"
@@ -861,7 +877,7 @@ const NewOrderView = () => {
               <View className="flex flex-row justify-between">
                 {currentStep > 1 && (
                   <TouchableOpacity
-                    className="bg-gray-300 text-white font-bold py-2 px-4 rounded-md"
+                    className="bg-gray-300 text-white font-bold py-2 px-6 mb-10 rounded-md"
                     onPress={handleBack}>
                     <Text className="text-center text-gray-800 font-semibold text-xl">
                       Back
@@ -870,7 +886,7 @@ const NewOrderView = () => {
                 )}
 
                 <TouchableOpacity
-                  className="bg-gray-800 w-44 text-white font-bold py-2 px-4 rounded-md"
+                  className="bg-gray-800 w-40 text-white font-bold py-2 px-4 mb-10 rounded-md"
                   onPress={handleNext}>
                   <Text className="text-center text-gray-50 font-semibold text-xl">
                     {isLoading
@@ -979,9 +995,9 @@ const NewOrderView = () => {
 
           {currentStep === 3 && (
             <View className="flex-1 justify items bg-gray-100 px-2">
-              <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
+              {/* <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
                 Order Items Confirmation
-              </Text>
+              </Text> */}
 
               <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
                 <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
@@ -1036,7 +1052,8 @@ const NewOrderView = () => {
             </View>
           )}
         </View>
-      </KeyboardAvoidingView>
+      </ScrollView>
+      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 };
