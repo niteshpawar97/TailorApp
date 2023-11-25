@@ -47,6 +47,7 @@ const NewOrderView = () => {
       setName('');
       setWhatsApp('');
       setSuggestions([]);
+      setMPSuggestions([]);
       setSelectedCustomer(null);
       setShouldFetchSuggestions(true);
       setError(null);
@@ -81,6 +82,7 @@ const NewOrderView = () => {
   const [phone, setPhone] = useState('');
   const [whatsapp, setWhatsApp] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [mpSuggestions, setMPSuggestions] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [shouldFetchSuggestions, setShouldFetchSuggestions] = useState(true);
   const [error, setError] = useState(null); // State to track errors
@@ -98,6 +100,9 @@ const NewOrderView = () => {
   const [selectedMaterial, setSelectedMaterial] = useState('Ready Made');
   const [material, setMaterial] = useState('');
   const [open, setOpen] = useState(false);
+  const [openMP, setOpenMP] = useState(false);
+  const [mpName, setMPName] = useState('');
+
   const [product, setProduct] = useState(null);
   const [productitems, setProductItems] = useState([]);
   const [opensize, setOpenSize] = useState(false);
@@ -302,6 +307,24 @@ const NewOrderView = () => {
     }
   };
 
+  const fetchMPSuggestions = async () => {
+    try {
+      // Construct the URL
+      //USE /api/client/mp?q=search&m=1234543456
+      const url = `${Config.CUSTOMER_MP_LIST_API}?q=search&m=${phone}`;
+
+      console.log('GET CUSTOMER_SEARCH:', url);
+      const data = await sendGetRequest(url);
+      console.log('GET Response:', data);
+      if (data.error === false) {
+        setMPSuggestions(data.mp);
+      }
+    } catch (error) {
+      console.log('Error fetching suggestions:', error);
+    }
+  };
+
+
   const handleSelectSuggestion = customer => {
     setSelectedCustomer(customer);
     setPhone(customer.mobile.toString());
@@ -370,12 +393,28 @@ const NewOrderView = () => {
       setIsLoading(true);
 
       setIsLoading(false);
+      fetchMPSuggestions();
     } else if (currentStep === 2) {
       // Handle step 2 logic
+      // Check if any of the required fields are empty
+      if (
+        !selectedMaterial ||
+        !selectedItems ||
+        selectedItems.length === 0 ||
+        !selectedItems[0].dress_name
+      ) {
+        setError('Please fill in all required fields');
+        return;
+      }
+
       // You can add more checks or actions for step 2 here
     } else if (currentStep === 3) {
       // Handle step 3 logic
-
+      // Check if any of the required fields are empty
+      if (!dDate) {
+        setError('Please fill in all required fields');
+        return;
+      }
       // Define a function to convert selectedItems into products
       const convertSelectedItemsToProducts = selectedItems => {
         const products = selectedItems.map((item, index) => ({
@@ -418,7 +457,8 @@ const NewOrderView = () => {
           const response = await sendPostRequest(ORDER_CREATE_API, invoiceData);
 
           if (response.error) {
-            console.error('Error creating order:', response.message);
+            //console.error('Error creating order:', response.message);
+            setError('creating order ', response);
             // Handle the error here
           } else {
             console.log('Order created successfully:', response);
@@ -624,7 +664,6 @@ const NewOrderView = () => {
               {currentStep === 2 && (
                 // Render step 2 fields
                 <View className="flex-1 justify items bg-gray-100 gap-2">
-                
                   <View className="flex justify-start ">
                     <RadioButton.Group
                       onValueChange={value => {
@@ -645,8 +684,7 @@ const NewOrderView = () => {
                         />
                       </View>
                       <View className="flex flex-row text-gray-950">
-
-                      <RadioButton.Item
+                        <RadioButton.Item
                           position="leading"
                           label="Sale Material"
                           value="Sale Material"
@@ -703,6 +741,37 @@ const NewOrderView = () => {
 
                   {selectedMaterial === 'Stitching' ? (
                     <View>
+                      {/* TODO mp name under working  */}
+                      <DropDownPicker
+                        open={openMP}
+                        value={mpName}
+                        items={mpSuggestions.map(mpItem => ({
+                          label: mpItem.name,
+                          value: mpItem.name,
+                        }))}
+                        setOpen={setOpenMP}
+                        setValue={value => {
+                          setMPName(value); // Set selected MP name to state
+                          const selectedMP = mpSuggestions.find(
+                            mpItem => mpItem.measurement === value,
+                          );
+                          if (selectedMP) {
+                            console.warn('selectedMP: ',selectedMP);
+                            setNewMpName(selectedMP.name);
+                            setMeasurement(selectedMP.measurement);
+                          }
+                        }}
+                        setItems={() => {}}
+                        placeholder="Select MP name"
+                        placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
+                        disableBorderRadius={false}
+                        showArrowIcon={false}
+                        showTickIcon={true}
+                        theme="LIGHT"
+                        autoScroll
+                        dropDownDirection="TOP"
+                      />
+
                       <TextInput
                         mode="outlined"
                         label="New MP Name"
