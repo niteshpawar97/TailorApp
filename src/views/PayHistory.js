@@ -1,6 +1,6 @@
 // History.js
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, FlatList} from 'react-native';
+import {View, Text, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Config from '../api/Config';
 import {
@@ -16,9 +16,22 @@ const PayHistoryScreen = ({navigation}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [payHistoryData, setPayHistoryData] = useState([]);
 
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
   useEffect(() => {
     fetcPayHistory();
   }, []);
+
+  useEffect(() => {
+    // Update filteredData when searchTerm or stocksData changes
+    const filtered = payHistoryData.filter(item =>
+      item.id.toString().includes(searchTerm) || // Check if search term is in order ID
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) // Check if search term is in name
+  );
+    setFilteredData(filtered);
+  }, [searchTerm, payHistoryData]);
 
   // Use useFocusEffect to fetch order history data when the screen is focused
   useFocusEffect(
@@ -33,19 +46,20 @@ const PayHistoryScreen = ({navigation}) => {
       console.log('payHistoryData: ', response.data);
       if (response && response.data) {
         setPayHistoryData(response.data);
+        setLoading(false);
+        setError('');
       } else {
-        console.error('Error fetching order history data');
+        setError('Error fetching order history data');
       }
     } catch (error) {
-      console.error('Error fetching order history data', error);
+      setError('Error fetching order history data: ' + error.message);
     }
   };
-  
 
   return (
     <View className="py-2 px-4">
-      <View className="flex flex-row justify-start items-center gap-x-10">
-        <TextInput
+      <View className="flex flex-row justify-end items-center gap-x-10">
+        {/* <TextInput
           className="bg-gray-50 rounded-full mr-0 w-40"
           mode="outlined"
           label="Start Date"
@@ -66,9 +80,10 @@ const PayHistoryScreen = ({navigation}) => {
           <Text className="text-center text-white w-28 font-semibold text-xl">
             Show
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        
         <TextInput
-          className="bg-gray-200 rounded-full mr-0 w-96"
+          className="bg-gray-100 rounded-full mr-0 w-96"
           mode="outlined"
           label="Search"
           value={searchTerm}
@@ -78,7 +93,7 @@ const PayHistoryScreen = ({navigation}) => {
 
       <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
         <Text className="text-gray-950 font-extrabold">#</Text>
-        <Text className="text-gray-950 font-extrabold">Order Id</Text>
+        <Text className="w-1/12 text-gray-950 font-extrabold">Order Id</Text>
         <Text className="w-1/12 text-gray-950 font-extrabold">Name</Text>
         <Text className="w-1/12  text-gray-950 font-extrabold">Mobile</Text>
         <Text className="w-1/12  text-gray-950 font-extrabold">Invoice Amount</Text>
@@ -91,16 +106,19 @@ const PayHistoryScreen = ({navigation}) => {
         </Text>
       </View>
 
+      {loading && <ActivityIndicator size="large" color="black" />}
+      {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
+
       <FlatList
         className="mb-4"
-        data={payHistoryData}
+        data={filteredData}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item, index}) => (
-          <View className="flex flex-row justify-between items-center bg-gray-100 border py-1 px-3 mt-1">
-            <Text className=" text-gray-950  text-lg font-medium">
+          <View className="flex flex-row justify-between bg-gray-100 border  border-gray-400 py-1 px-3 mt-1">
+            <Text className=" text-gray-950 text-lg font-medium">
               {index + 1}
             </Text>
-            <Text className="text-gray-950  text-lg font-medium">
+            <Text className="w-1/12 text-gray-950  text-lg font-medium">
               {item.id}
             </Text>
             <Text className="w-1/12 text-gray-950  text-lg font-medium">

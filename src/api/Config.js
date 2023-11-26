@@ -1,6 +1,6 @@
 // src/api/Config.js
 
-const API_BASE_URL      = 'http://64.226.115.230:3000/api';  // Replace with your API base URL
+const API_BASE_URL      = 'https://antaryami.xyz/api';  // Replace with your API base URL
 
 const LOGIN_API         = `${API_BASE_URL}/login`; //POST
 const LOGOUT_API        = `${API_BASE_URL}/logout`; //get

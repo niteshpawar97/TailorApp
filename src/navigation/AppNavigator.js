@@ -9,7 +9,7 @@ import PayHistory from '../views/PayHistory';
 import Stock from '../views/Stock';
 import Customer from '../views/Customer';
 import NewOrder from '../views/NewOrder';
-import History from '../views/History';
+import Orders from '../views/Orders';
 import Profile from '../views/Profile';
 import {KeyboardAvoidingView, Platform} from 'react-native'; // Import KeyboardAvoidingView
 import LottieView from 'lottie-react-native';
@@ -31,7 +31,7 @@ const AppNavigator = {
       const animationSource = {
         Dashboard: require('../assets/lottie/home.json'),
         'New Order': require('../assets/lottie/order.json'),
-        History: require('../assets/lottie/history.json'),
+        Orders: require('../assets/lottie/history.json'),
         PayHistory: require('../assets/lottie/pay.json'),
         Stock: require('../assets/lottie/stock.json'),
         Customers: require('../assets/lottie/customer.json'),
@@ -133,22 +133,16 @@ const AppNavigator = {
                 }}
               />
             ),
-            // tabBarIcon: ({color, size}) => (
-            //   <MaterialCommunityIcons
-            //     name="plus-box"
-            //     color={color}
-            //     size={size}
-            //   />
-            // ),
+            
             tabBarIcon: ({color, size}) => getTabIcon('New Order', color, size),
           })}
         />
 
         <Tab.Screen
-          name="History"
-          component={History}
+          name="Orders "
+          component={Orders}
           options={({navigation}) => ({
-            headerTitle: 'History',
+            headerTitle: 'Orders',
             headerTintColor: '#FFFFFF', // Set the text color
             headerStyle: {backgroundColor: '#495373'},
             headerLeft: () => (
@@ -184,7 +178,7 @@ const AppNavigator = {
               />
             ),
             
-            tabBarIcon: ({color, size}) => getTabIcon('History', color, size),
+            tabBarIcon: ({color, size}) => getTabIcon('Orders', color, size),
           })}
         />
 
@@ -369,7 +363,7 @@ const AppNavigator = {
   Login: Login,
   Dashboard: Dashboard,
   NewOrder: NewOrder,
-  History: History,
+  Orders: Orders,
 };
 
 export default AppNavigator;

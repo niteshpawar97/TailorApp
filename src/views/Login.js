@@ -35,7 +35,22 @@ const LoginView = () => {
         console.error('Error saving user details:', error);
       }
       // Navigate to the DashboardView
-      navigation.navigate('Dashboard');
+      //navigation.navigate('Dashboard');
+
+      if (user.role === 'CLIENT') {
+        // User is a CLIENT, navigate to Dashboard
+        navigation.replace('Dashboard'); // Replace 'Dashboard' with your screen name
+        console.log('Login Success: user data if exists');
+      } else if (user.role === 'MANAGER') {
+        // User is a MANAGER, navigate to AgentDashboard
+        navigation.replace('AgentDashboard'); // Replace 'AgentDashboard' with your screen name
+        console.log('Agent Login Success: user data if exists');
+      } else {
+        // Handle other roles if needed
+        console.log('Unknown role. Unable to determine navigation.');
+      }
+
+
     } catch (error) {
       setError(error.message); // Set the error message in state
     }

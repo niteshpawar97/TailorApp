@@ -6,7 +6,7 @@ import Config from '../api/Config';
 import {sendGetRequest} from '../helpers/apiRequestWithHeaders';
 import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
 
-const StockScreen = ({navigation}) => {
+const AgentStockScreen = ({navigation}) => {
   // State to manage the date range and search term
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -55,28 +55,7 @@ const StockScreen = ({navigation}) => {
   return (
     <View className="py-2 px-4">
       <View className="flex flex-row justify-end items-center gap-x-10">
-        {/* <TextInput
-          className="bg-gray-50 rounded-full mr-0 w-40"
-          mode="outlined"
-          label="Start Date"
-          value={startDate}
-          onChangeText={text => setStartDate(text)}
-        />
-        <TextInput
-          className="bg-gray-50 rounded-full mr-0 w-40"
-          mode="outlined"
-          label="End Date"
-          value={endDate}
-          onChangeText={text => setEndDate(text)}
-        />
-        <TouchableOpacity
-          className="bg-gray-700 font-bold mt-2 p-3 px-1 rounded-md"
-          // onPress={handleBack}
-        >
-          <Text className="text-center text-white w-28 font-semibold text-xl">
-            Show
-          </Text>
-        </TouchableOpacity> */}
+       
         <TextInput
           className="bg-gray-100 rounded-full mr-0 w-96"
           mode="outlined"
@@ -131,4 +110,4 @@ const StockScreen = ({navigation}) => {
   );
 };
 
-export default StockScreen;
+export default AgentStockScreen;

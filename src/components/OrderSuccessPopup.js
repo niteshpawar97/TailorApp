@@ -2,6 +2,7 @@
 import React from 'react';
 import {View, Modal,} from 'react-native';
 import InvoicePrint from '../components/InvoicePrint'; 
+import OrderPrint from '../components/OrderPrint'; 
 import { Button, Text } from 'react-native-paper';
 
 const OrderSuccessPopup = ({ isVisible, isInvoicePrintVisible,  isLoading, orderDetails, onClose, onOrderPrint, onInvoicePrint, invoiceDetails }) => {
@@ -43,6 +44,12 @@ const OrderSuccessPopup = ({ isVisible, isInvoicePrintVisible,  isLoading, order
             onPress={onOrderPrint}>
             <Text className="text-green-500 font-bold text-xl">Order Print</Text>
           </Button>
+
+          {/* Render InvoicePrint component based on visibility */}
+          {isLoading && <Text>Loading, please wait...</Text>}
+          {isInvoicePrintVisible && (
+            <OrderPrint orderDetails={invoiceDetails} />
+          )}
 
           <Button
             className="bg-white text-green-500 font-bold rounded mb-4 px-6 py-3"

@@ -81,7 +81,7 @@ function DashboardView() {
               </>
             )}
 
-            <View className="flex flex-row gap-2">
+            <View className="flex flex-row gap-2 py-2">
               <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
                   <View className="flex justify-end">
@@ -108,6 +108,21 @@ function DashboardView() {
                 </View>
               </Card>
 
+              <Card className="flex-1 h-32 bg-gray-300 mt-2">
+                <View className="relative">
+                  <View className="flex justify-end">
+                    <Card.Content>
+                      <Title className="pl-2 text-gray-900 text-xl pt-5">
+                        Customers | Today{' '}
+                      </Title>
+                      <Title className="p-2 text-gray-800 text-5xl">0</Title>
+                    </Card.Content>
+                  </View>
+                </View>
+              </Card>
+            </View>
+
+            <View className="flex flex-row gap-2 py-2">
               <Card className="flex-1 h-32 bg-gray-300 mt-2">
                 <View className="relative">
                   <View className="flex justify-end">

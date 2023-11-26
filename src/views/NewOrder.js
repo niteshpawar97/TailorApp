@@ -75,6 +75,8 @@ const NewOrderView = () => {
       setShouldFetchSavedProducts(true);
       setIsSuccessModalVisible(false);
       setOrderDetails(null);
+      setInvoicePrintVisible(false);
+      setOrderPrintVisible(false);
     }, []),
   );
 
@@ -119,6 +121,7 @@ const NewOrderView = () => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [invoiceDetails, setInvoiceDetails] = useState([]);
   const [isInvoicePrintVisible, setInvoicePrintVisible] = useState(false);
+  const [isOrderPrintVisible, setOrderPrintVisible] = useState(false);
 
   const handleAddItem = () => {
     if (selectedMaterial === 'Stitching') {
@@ -501,10 +504,34 @@ const NewOrderView = () => {
     // Add any additional actions you want to perform after closing the modal
   };
 
-  // Function to handle order print
-  const handleOrderPrint = () => {
-    // Add logic for order print
-    // For example, navigate to a new screen or perform a print action
+  //TODO have a error Function to handle order print 
+  const handleOrderPrint = async () => {
+    setIsLoading(true);
+    // Set order details here based on your logic or API call
+    // For example, fetch order details using the order ID
+    const orderUrl = `${Config.ORDER_DETAILS_API}?oid=${orderDetails.order_id}`;
+
+    try {
+      const invoiceDetailsResponse = await sendGetRequest(orderUrl);
+
+      if (invoiceDetailsResponse.error) {
+        console.error(
+          'Error fetching invoice details:',
+          invoiceDetailsResponse.message,
+        );
+        // Handle the error here
+      } else {
+        const updatedInvoiceDetails = invoiceDetailsResponse.data[0]; // Assuming the data is an array
+        setInvoiceDetails(updatedInvoiceDetails);
+        // console.log('#477 setInvoiceDetails: ', orderUrl, '=====',  invoiceDetails)
+        // Toggle the visibility of the InvoicePrint component in the success modal
+        setOrderPrintVisible(!isOrderPrintVisible);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      // Handle the error here
+    }
   };
 
   const handleInvoicePrint = async () => {
@@ -712,7 +739,7 @@ const NewOrderView = () => {
                       placeholder="Select Product"
                       placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
                       disableBorderRadius={false}
-                      showArrowIcon={false}
+                      showArrowIcon={true}
                       showTickIcon={true}
                       theme="LIGHT"
                       autoScroll
@@ -732,7 +759,8 @@ const NewOrderView = () => {
                         disableBorderRadius={false}
                         autoScroll
                         placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
-                        showArrowIcon={false}
+                        showArrowIcon={true}
+                        showTickIcon={true}
                         theme="LIGHT"
                         dropDownDirection="TOP"
                       />
@@ -765,7 +793,7 @@ const NewOrderView = () => {
                         placeholder="Select MP name"
                         placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
                         disableBorderRadius={false}
-                        showArrowIcon={false}
+                        showArrowIcon={true}
                         showTickIcon={true}
                         theme="LIGHT"
                         autoScroll
