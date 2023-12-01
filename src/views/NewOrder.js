@@ -77,6 +77,8 @@ const NewOrderView = () => {
       setOrderDetails(null);
       setInvoicePrintVisible(false);
       setOrderPrintVisible(false);
+      setMPName('');
+      setNewMpName('');
     }, []),
   );
 
@@ -316,9 +318,9 @@ const NewOrderView = () => {
       //USE /api/client/mp?q=search&m=1234543456
       const url = `${Config.CUSTOMER_MP_LIST_API}?q=search&m=${phone}`;
 
-      console.log('GET CUSTOMER_SEARCH:', url);
+      console.log('GET CUSTOMER_MP_LIST_API:', url);
       const data = await sendGetRequest(url);
-      console.log('GET Response:', data);
+      console.log('GET MP Response:', data);
       if (data.error === false) {
         setMPSuggestions(data.mp);
       }
@@ -327,6 +329,47 @@ const NewOrderView = () => {
     }
   };
 
+  // Dynamically add "New MP" to the mpSuggestions array
+  const newMpItem = {name: 'New', measurement: ''};
+  const oldMpItem = {name: 'Old', measurement: ''};
+  const updatedMpSuggestions = [...mpSuggestions, newMpItem, oldMpItem];
+
+  const handleMPValueChange = () => {
+    const selectedMP = updatedMpSuggestions.find(
+      mpItem => mpItem.name === mpName,
+    );
+    if (selectedMP) {
+      if (selectedMP.name === 'New') {
+        // setNewMpName('');
+        // setMeasurement('');
+      } else {
+        if (selectedMP.name === 'Old') {
+          // setNewMpName('');
+        } else {
+          setNewMpName(selectedMP.name);
+          setMeasurement(selectedMP.measurement);
+          setMPName('Old');
+        }
+      }
+    } else {
+      // Handle case when the selected MP is not found
+      // console.warn('Selected MP not found:', mpName);//
+    }
+  };
+
+  useEffect(() => {
+    handleMPValueChange();
+    // This effect will run whenever newMpName or selectedMP changes
+    if (newMpName === mpName) {
+      // Do something when newMpName matches selectedMP.name
+      console.log('Match found!');
+      //setMPName('Old');
+    } else {
+      // Do something else when newMpName does not match selectedMP.name
+      console.log('No match.');
+      //setMPName('New');
+    }
+  }, [newMpName, mpName]);
 
   const handleSelectSuggestion = customer => {
     setSelectedCustomer(customer);
@@ -504,7 +547,7 @@ const NewOrderView = () => {
     // Add any additional actions you want to perform after closing the modal
   };
 
-  //TODO have a error Function to handle order print 
+  //TODO have a error Function to handle order print
   const handleOrderPrint = async () => {
     setIsLoading(true);
     // Set order details here based on your logic or API call
@@ -769,26 +812,17 @@ const NewOrderView = () => {
 
                   {selectedMaterial === 'Stitching' ? (
                     <View>
-                      {/* TODO mp name under working  */}
+                      {/* mp name working Done  */}
                       <DropDownPicker
                         open={openMP}
                         value={mpName}
-                        items={mpSuggestions.map(mpItem => ({
+                        items={updatedMpSuggestions.map(mpItem => ({
                           label: mpItem.name,
                           value: mpItem.name,
+                          disabled: mpItem.name === 'Old', // Disable only the "New MP" item
                         }))}
                         setOpen={setOpenMP}
-                        setValue={value => {
-                          setMPName(value); // Set selected MP name to state
-                          const selectedMP = mpSuggestions.find(
-                            mpItem => mpItem.measurement === value,
-                          );
-                          if (selectedMP) {
-                            console.warn('selectedMP: ',selectedMP);
-                            setNewMpName(selectedMP.name);
-                            setMeasurement(selectedMP.measurement);
-                          }
-                        }}
+                        setValue={setMPName}
                         setItems={() => {}}
                         placeholder="Select MP name"
                         placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
