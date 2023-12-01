@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator,
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Config from '../api/Config';
@@ -15,19 +14,22 @@ import {
 } from '../helpers/apiRequestWithHeaders';
 import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
 import OrderDetailsModal from '../components/OrderDetailsModal';
+import LoaderOnly from '../components/LoaderOnly'; // Adjust the path based on your project structure
 
 const HistoryScreen = ({navigation}) => {
   // State to manage the date range and search term
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  // const [startDate, setStartDate] = useState('');
+  // const [endDate, setEndDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [orderHistoryData, setOrderHistoryData] = useState([]);
 
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [orderDetails, setOrderDetails] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
   useEffect(() => {
     fetchOrderHistory();
@@ -51,34 +53,48 @@ const HistoryScreen = ({navigation}) => {
     }, []), // The empty dependency array ensures this effect runs only once when the component mounts
   );
 
+  // fetchOrderHistory
   const fetchOrderHistory = async () => {
+    setIsLoading(true);
     try {
       const response = await sendGetRequest(Config.ORDER_HISTORY_API);
+      
       if (response && response.data) {
+        setIsLoading(true);
         setOrderHistoryData(response.data);
-        setLoading(false);
         setError('');
+        setIsLoading(false);
       } else {
+        setIsLoading(false);
         setError('Error fetching orders data');
       }
     } catch (error) {
+      setIsLoading(false);
       setError('Error fetching orders data: ' + error.message);
     }
   };
 
+  // fetchOrderDetails single order 
   const fetchOrderDetails = async order_id => {
+    setIsLoading(true);
     try {
+      
+      setIsLoading(true);
       const url = `${Config.ORDER_DETAILS_API}?oid=${order_id}`;
       console.log('GET ORDER_DETAILS_API:', url);
       const data = await sendGetRequest(url);
       console.log('GET Response:', data);
       if (data.error === false) {
+        
         setOrderDetails(data.data[0]);
         setIsModalVisible(true); // Show modal after fetching data
       }
     } catch (error) {
+      
+      setIsLoading(false);
       console.log('Error fetching order details:', error);
     }
+    setIsLoading(false);
   };
 
   const closeModal = () => {
@@ -88,30 +104,34 @@ const HistoryScreen = ({navigation}) => {
 
   return (
     <View className="py-2 px-4">
-      <View className="flex flex-row justify-end items-center gap-x-10">
-        <TextInput
-          className="bg-gray-200 rounded-full mr-0 w-96"
-          mode="outlined"
-          label="Search"
-          value={searchTerm}
-          onChangeText={text => setSearchTerm(text)}
-        />
-      </View>
+     
+      {/* Render your content or handle error state */}
+      
+        <View className="flex flex-row justify-end items-center gap-x-10">
+          <TextInput
+            className="bg-gray-200 rounded-full mr-0 w-96"
+            mode="outlined"
+            label="Search"
+            value={searchTerm}
+            onChangeText={text => setSearchTerm(text)}
+          />
+        </View>
+      
 
       <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-        <Text className="w-2 text-gray-950 font-extrabold">#</Text>
-        <Text className="w-1/12 text-gray-950 font-extrabold">Order Id</Text>
-        <Text className="w-1/12 text-gray-950 font-extrabold">Name</Text>
-        <Text className="w-1/12  text-gray-950 font-extrabold">Mobile</Text>
-        <Text className="w-1/12  text-gray-950 font-extrabold">Balance</Text>
-        <Text className="w-1/12 text-gray-950 font-extrabold">Order</Text>
-        <Text className="w-1/12 text-gray-950 font-extrabold">Delivery</Text>
-        <Text className="w-1/12 text-gray-950 font-extrabold">Status</Text>
-        <Text className="w-1/8 text-red-500 font-extrabold">Action</Text>
+        <Text className="w-2 text-gray-950 font-normal">#</Text>
+        <Text className="w-1/12 text-gray-950 font-normal">Order Id</Text>
+        <Text className="w-1/12 text-gray-950 font-normal">Name</Text>
+        <Text className="w-1/12 text-gray-950 font-normal">Mobile</Text>
+        <Text className="w-1/12 text-gray-950 font-normal">Balance</Text>
+        <Text className="w-1/12 text-gray-950 font-normal">Order</Text>
+        <Text className="w-1/12 text-gray-950 font-normal">Delivery</Text>
+        <Text className="w-1/12 text-gray-950 font-normal">Status</Text>
+        <Text className="w-1/8 text-red-500 font-normal">Action</Text>
       </View>
 
-      {loading && <ActivityIndicator size="large" color="black" />}
       {error && <Text style={{color: 'red', marginBottom: 10}}>{error}</Text>}
+      <LoaderOnly isLoading={isLoading} />
 
       <FlatList
         className="mb-4"
@@ -150,14 +170,18 @@ const HistoryScreen = ({navigation}) => {
                 View
               </Text>
             </TouchableOpacity>
+             {/* Show loader only when isLoadingDetails is true */}
+      {isLoadingDetails && <LoaderOnly isLoading={true} />}
 
             {/* Render OrderDetailsModal when isModalVisible is true */}
             {isModalVisible && (
+              
               <OrderDetailsModal
                 isVisible={isModalVisible}
                 orderDetails={orderDetails}
                 onClose={closeModal}
               />
+              
             )}
           </View>
         )}

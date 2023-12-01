@@ -10,7 +10,7 @@ const MPModal = ({isVisible, suggestions, onClose}) => {
       visible={isVisible}
       onRequestClose={onClose}>
       <View className="flex-1 justify-center items-center">
-        <View className="bg-white p-4 rounded w-1/2">
+        <View className="bg-white p-4 rounded w-1/2  shadow-xl shadow-gray-950">
           <Text className="text-xl font-bold mb-2">MP Suggestions</Text>
           <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
             <Text className="w-2  text-gray-950 font-extrabold">#</Text>

@@ -3,7 +3,7 @@
 import React, {useEffect} from 'react';
 import RNPrint from 'react-native-print';
 
-import {Text, View, TouchableOpacity} from 'react-native';
+import {Text, View, } from 'react-native';
 
 export default function InvoicePrint({invoiceDetails}) {
   useEffect(() => {

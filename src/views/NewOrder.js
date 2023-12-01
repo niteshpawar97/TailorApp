@@ -19,7 +19,7 @@ import {
   sendGetRequest,
 } from '../helpers/apiRequestWithHeaders';
 import ErrorPopup from '../components/ErrorPopup';
-import OrderSuccessPopup from '../components/OrderSuccessPopup';
+import OrderSuccessPopup from '../components/OrderDone';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {
@@ -30,6 +30,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {LogBox} from 'react-native';
+import LoaderOnly from '../components/LoaderOnly'; // Adjust the path based on your project structure
 
 const {CUSTOMER_SEARCH, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API} =
   Config;
@@ -66,7 +67,7 @@ const NewOrderView = () => {
       setProduct(null);
       setProductItems([]);
       setOpenSize(false);
-      setSize(null);
+      setSize('freesize');
       setSizes([{label: 'Free Size', value: 'freesize'}]);
       setDdate('');
       setSelectedItems([]);
@@ -79,6 +80,8 @@ const NewOrderView = () => {
       setOrderPrintVisible(false);
       setMPName('');
       setNewMpName('');
+      
+      setIsLoader(false);
     }, []),
   );
 
@@ -96,6 +99,7 @@ const NewOrderView = () => {
   const [newMpName, setNewMpName] = useState('');
   const [quantity, setQuantity] = useState('');
 
+  const [isLoader, setIsLoader] = useState(false);
   const [paid, setPaid] = useState('0');
   const [paidmode, setPaidmode] = useState('');
   const [discount, setDiscount] = useState('0');
@@ -110,7 +114,7 @@ const NewOrderView = () => {
   const [product, setProduct] = useState(null);
   const [productitems, setProductItems] = useState([]);
   const [opensize, setOpenSize] = useState(false);
-  const [size, setSize] = useState(null);
+  const [size, setSize] = useState('freesize');
   const [sizes, setSizes] = useState([{label: 'Free Size', value: 'freesize'}]);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dDate, setDdate] = useState('');
@@ -148,7 +152,7 @@ const NewOrderView = () => {
 
           setSelectedItems([...selectedItems, newItem]);
           setProduct('');
-          setSize('');
+          setSize('freesize');
           setQuantity('');
           setNewMpName('');
           setMeasurement('');
@@ -436,9 +440,6 @@ const NewOrderView = () => {
         return;
       }
       // Set the loading state to true
-      setIsLoading(true);
-
-      setIsLoading(false);
       fetchMPSuggestions();
     } else if (currentStep === 2) {
       // Handle step 2 logic
@@ -456,11 +457,24 @@ const NewOrderView = () => {
       // You can add more checks or actions for step 2 here
     } else if (currentStep === 3) {
       // Handle step 3 logic
+      
       // Check if any of the required fields are empty
       if (!dDate) {
         setError('Please fill in all required fields');
         return;
       }
+
+      // Assuming paid is a state variable
+      if (paid === 0) {
+        setPaidmode('');
+      }
+
+      if (paidmode && (paid === 0 || paid === null || paid < 0)) {
+        setPaidmode('');
+        setError('Invalid Amount for paid');
+        return;
+      }
+
       // Define a function to convert selectedItems into products
       const convertSelectedItemsToProducts = selectedItems => {
         const products = selectedItems.map((item, index) => ({
@@ -496,23 +510,34 @@ const NewOrderView = () => {
       const invoiceData = createInvoiceData(dDate, customer, products, billing);
       // console.warn('products: ', products);
       // console.warn('invoiceData: ', invoiceData);
-
+      
       // Send the POST request
       const createOrder = async () => {
+        
+      setIsLoader(true);
         try {
           const response = await sendPostRequest(ORDER_CREATE_API, invoiceData);
 
           if (response.error) {
             //console.error('Error creating order:', response.message);
+            setIsLoader(false);
             setError('creating order ', response);
             // Handle the error here
           } else {
             console.log('Order created successfully:', response);
             // Set order details and show success modal
             setOrderDetails(response);
-            setIsSuccessModalVisible(true);
+            // Trigger the second API call after successfully creating the order
+            if (response.order_id) {
+              fetchInvoiceDetails(response.order_id);
+            } else {
+              setIsLoader(false);
+              console.log('No order ID available to fetch details.');
+            }
+            // setIsSuccessModalVisible(true);
           }
         } catch (error) {
+          setIsLoader(false);
           console.error('Error creating order:', error);
           // Handle the error here
         }
@@ -522,10 +547,44 @@ const NewOrderView = () => {
       createOrder();
     }
 
+    // Function to fetch invoice details
+    const fetchInvoiceDetails = async orderId => {
+      try {
+        // Check if orderId exists
+        if (orderId) {
+          // If orderId exists, fetch details
+          const orderUrl = `${Config.ORDER_DETAILS_API}?oid=${orderId}`;
+          const invoiceDetailsResponse = await sendGetRequest(orderUrl);
+
+          if (invoiceDetailsResponse.error) {
+            console.error(
+              'Error fetching invoice details:',
+              invoiceDetailsResponse.message,
+            );
+            setIsLoader(false);
+            // Handle the error here
+          } else {
+            // Assuming the data is an array
+            const updatedInvoiceDetails = invoiceDetailsResponse.data[0];
+            setInvoiceDetails(updatedInvoiceDetails);
+            setIsSuccessModalVisible(true);
+            setIsLoader(false);
+          }
+        } else {
+          
+          console.log('No order ID available to fetch details.');
+          setIsLoader(false);
+        }
+      } catch (error) {
+        console.error('Error fetching invoice details:', error);
+        setIsLoader(false);
+        // Handle the error here
+      }
+    };
+
     // If the current step is less than 3, proceed to the next step
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
-
       return;
     }
   };
@@ -547,62 +606,15 @@ const NewOrderView = () => {
     // Add any additional actions you want to perform after closing the modal
   };
 
-  //TODO have a error Function to handle order print
-  const handleOrderPrint = async () => {
-    setIsLoading(true);
-    // Set order details here based on your logic or API call
-    // For example, fetch order details using the order ID
-    const orderUrl = `${Config.ORDER_DETAILS_API}?oid=${orderDetails.order_id}`;
-
-    try {
-      const invoiceDetailsResponse = await sendGetRequest(orderUrl);
-
-      if (invoiceDetailsResponse.error) {
-        console.error(
-          'Error fetching invoice details:',
-          invoiceDetailsResponse.message,
-        );
-        // Handle the error here
-      } else {
-        const updatedInvoiceDetails = invoiceDetailsResponse.data[0]; // Assuming the data is an array
-        setInvoiceDetails(updatedInvoiceDetails);
-        // console.log('#477 setInvoiceDetails: ', orderUrl, '=====',  invoiceDetails)
-        // Toggle the visibility of the InvoicePrint component in the success modal
-        setOrderPrintVisible(!isOrderPrintVisible);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error('Error fetching order details:', error);
-      // Handle the error here
-    }
-  };
-
   const handleInvoicePrint = async () => {
-    setIsLoading(true);
-    // Set order details here based on your logic or API call
-    // For example, fetch order details using the order ID
-    const orderUrl = `${Config.ORDER_DETAILS_API}?oid=${orderDetails.order_id}`;
-
-    try {
-      const invoiceDetailsResponse = await sendGetRequest(orderUrl);
-
-      if (invoiceDetailsResponse.error) {
-        console.error(
-          'Error fetching invoice details:',
-          invoiceDetailsResponse.message,
-        );
-        // Handle the error here
-      } else {
-        const updatedInvoiceDetails = invoiceDetailsResponse.data[0]; // Assuming the data is an array
-        setInvoiceDetails(updatedInvoiceDetails);
-        // console.log('#477 setInvoiceDetails: ', orderUrl, '=====',  invoiceDetails)
-        // Toggle the visibility of the InvoicePrint component in the success modal
-        setInvoicePrintVisible(!isInvoicePrintVisible);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error('Error fetching order details:', error);
-      // Handle the error here
+    // Check if invoiceDetails exist
+    if (invoiceDetails) {
+      setIsLoader(true);
+      setInvoicePrintVisible(!isInvoicePrintVisible);
+      setIsLoader(false);
+    } else {
+      // Handle the case when invoiceDetails do not exist
+      console.log('No invoice details available.');
     }
   };
 
@@ -619,23 +631,23 @@ const NewOrderView = () => {
 
   const paidHandleChangeText = text => {
     // Remove leading zeros
-    const sanitizedText = text.replace(/^0+/, '');
+    const sanitizedPaid = text.replace(/^0+/, '');
 
     // Update the state when the user types a new value or clears the input
-    setPaid(sanitizedText === '' ? '0' : sanitizedText);
+    setPaid(sanitizedPaid === '' ? '0' : sanitizedPaid);
   };
 
   const disHandleFocus = () => {
     // When the TextInput is focused, select the text
-    setDiscount(paid === '0' ? '' : paid);
+    setDiscount(discount === '0' ? '' : discount);
   };
 
   const disHandleChangeText = text => {
     // Remove leading zeros
-    const sanitizedText = text.replace(/^0+/, '');
+    const sanitizedDisc = text.replace(/^0+/, '');
 
     // Update the state when the user types a new value or clears the input
-    setDiscount(sanitizedText === '' ? '0' : sanitizedText);
+    setDiscount(sanitizedDisc === '' ? '0' : sanitizedDisc);
   };
 
   return (
@@ -667,6 +679,9 @@ const NewOrderView = () => {
                   ? 'flex w-full flex-col gap-6'
                   : 'flex w-72 flex-col gap-6 pt-5'
               }>
+              {/* loader Show */}
+              {/* <LoaderOnly isLoading={isLoading} /> */}
+
               {currentStep === 1 && (
                 <View>
                   <TextInput
@@ -880,13 +895,13 @@ const NewOrderView = () => {
               {currentStep === 3 && (
                 // Items Show added
                 <ScrollView>
-                  <View className="px-6 py-2 w-full text-center rounded-md bg-gray-100">
-                    <Text className="text text-xl p-2 bg-gray-200 text-green-500 font-bold">
+                  <View className="w-full text-center rounded-md bg-gray-100">
+                    <Text className="text text-xl px-3 py-1 mt-1  bg-gray-300 text-gray-950 font-light">
                       Order Confirmation
                     </Text>
 
                     <View className="flex flex-row mt-2">
-                      <View className="flex-1 justify-between">
+                      <View className="flex-1 justify-between pl-4">
                         {/* <Text>Side 1 </Text> */}
 
                         <Text className="  py-1 px-2 text-gray-950 font-extrabold">
@@ -984,16 +999,24 @@ const NewOrderView = () => {
                         </RadioButton.Group>
 
                         <View className="flex-row h-14 py-1 px-1 ">
-                          <TextInput
-                            mode="outlined"
-                            className="rounded-md w-40 text-green-600"
-                            // Add the onChangeText and value for step 3
-                            // onChangeText={text => setPaid(text)}
-                            onChangeText={paidHandleChangeText}
-                            value={paid}
-                            onFocus={paidHandleFocus}
-                            keyboardType="phone-pad"
-                          />
+                          {paidmode === 'card' || paidmode === 'cash' ? (
+                            <TextInput
+                              mode="outlined"
+                              className="rounded-md w-40 text-green-600"
+                              onChangeText={paidHandleChangeText}
+                              value={paid}
+                              onFocus={paidHandleFocus}
+                              keyboardType="phone-pad"
+                            />
+                          ) : (
+                            <TextInput
+                              mode="outlined"
+                              className="rounded-md w-40 text-green-600"
+                              editable={false} // Make the TextInput not editable
+                              disabled
+                              value={paid}
+                            />
+                          )}
                         </View>
 
                         <Text className="py-1 px-2  text-2xl text-red-700 font-extrabold">
@@ -1043,7 +1066,6 @@ const NewOrderView = () => {
                   isVisible={isSuccessModalVisible}
                   orderDetails={orderDetails}
                   onClose={handleNewOrder}
-                  onOrderPrint={handleOrderPrint}
                   onInvoicePrint={handleInvoicePrint}
                   isLoading={isLoading}
                   invoiceDetails={invoiceDetails}
@@ -1125,31 +1147,23 @@ const NewOrderView = () => {
           )}
 
           {currentStep === 3 && (
-            <View className="flex-1 justify items bg-gray-100 px-2">
+            <View className="flex-1 justify items bg-gray-100">
               {/* <Text className="text text-xl p-2 bg-gray-200 text-gray-900 font-bold">
                 Order Items Confirmation
               </Text> */}
 
               <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-                <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
-                <Text className="w-1/6 text-gray-950 font-extrabold">
+                <Text className="w-1/12  text-gray-950 font-light">#</Text>
+                <Text className="w-1/6 text-gray-950 font-light">
                   Item Name
                 </Text>
-                <Text className="w-1/6 text-gray-950 font-extrabold">
+                <Text className="w-1/6 text-gray-950 font-light">
                   Dress Type
                 </Text>
-                <Text className="w-1/12  text-gray-950 font-extrabold">
-                  Size
-                </Text>
-                <Text className="w-1/12  text-gray-950 font-extrabold">
-                  Qty
-                </Text>
-                <Text className="w-1/12  text-gray-950 font-extrabold">
-                  Price
-                </Text>
-                <Text className="w-1/6 text-gray-950 font-extrabold">
-                  Total
-                </Text>
+                <Text className="w-1/12  text-gray-950 font-light">Size</Text>
+                <Text className="w-1/12  text-gray-950 font-light">Qty</Text>
+                <Text className="w-1/12  text-gray-950 font-light">Price</Text>
+                <Text className="w-1/6 text-gray-950 font-light">Total</Text>
               </View>
 
               {selectedItems.map((item, index) => (
