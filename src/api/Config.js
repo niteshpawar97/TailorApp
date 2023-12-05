@@ -10,7 +10,8 @@ const PWD_CHANGE_API    = `${API_BASE_URL}/changepwd`; //post data: // {"oldpass
 
 const BASE_CLIENT_API   = `${API_BASE_URL}/client`; // Sub use client
 
-const CUSTOMER_SEARCH   = `${BASE_CLIENT_API}/customers`; // 
+const DASHBOARD_API   = `${BASE_CLIENT_API}/dashboard`; // 
+const CUSTOMER_SEARCH_API   = `${BASE_CLIENT_API}/customers`; // 
 const ORDER_CREATE_API  = `${BASE_CLIENT_API}/order`; // 
 const ALL_PRODUCT_API   = `${BASE_CLIENT_API}/allproducts`; // 
 const ORDER_HISTORY_API =  `${BASE_CLIENT_API}/orderhistory`; // 
@@ -23,9 +24,9 @@ const CUSTOMER_MP_LIST_API =  `${BASE_CLIENT_API}/mp`; //USE /api/client/mp?q=se
 
 
 export default {
+  DASHBOARD_API,
   LOGIN_API, LOGOUT_API, USER_CHECK_API, PWD_CHANGE_API,
-  CUSTOMER_SEARCH, CUSTOMER_LIST_API, CUSTOMER_MP_LIST_API,
+  CUSTOMER_SEARCH_API, CUSTOMER_LIST_API, CUSTOMER_MP_LIST_API,
   ORDER_CREATE_API, ORDER_HISTORY_API, ORDER_DETAILS_API,
   ALL_PRODUCT_API, STOCK_LIST_API, PAY_HISTORY_API, 
-  
 };

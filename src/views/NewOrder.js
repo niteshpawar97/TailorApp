@@ -32,7 +32,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {LogBox} from 'react-native';
 import LoaderOnly from '../components/LoaderOnly'; // Adjust the path based on your project structure
 
-const {CUSTOMER_SEARCH, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API} =
+const {CUSTOMER_SEARCH_API, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API} =
   Config;
 
 const NewOrderView = () => {
@@ -184,7 +184,7 @@ const NewOrderView = () => {
 
           setSelectedItems([...selectedItems, newItem]);
           setProduct('');
-          setSize('');
+          setSize('freesize');
           setQuantity('');
           setNewMpName('');
           setMeasurement('');
@@ -302,13 +302,16 @@ const NewOrderView = () => {
       try {
         // Construct the URL
         ///api/client/customers?q=search&m=1234
-        const url = `${CUSTOMER_SEARCH}?q=search&m=${phone}`;
+        const url = `${CUSTOMER_SEARCH_API}?q=search&m=${phone}`;
 
-        console.log('GET CUSTOMER_SEARCH:', url);
+        console.log('GET CUSTOMER_SEARCH_API:', url);
         const data = await sendGetRequest(url);
         console.log('GET Response:', data.customer);
         if (data.error === false) {
           setSuggestions(data.customer);
+        }
+        if (data.error === true) {
+          setSuggestions([]);
         }
       } catch (error) {
         console.log('Error fetching suggestions:', error);

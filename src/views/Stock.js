@@ -5,6 +5,7 @@ import {TextInput} from 'react-native-paper';
 import Config from '../api/Config';
 import {sendGetRequest} from '../helpers/apiRequestWithHeaders';
 import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
+import LoaderOnly from '../components/LoaderOnly'; // Adjust the path based on your project structure
 
 const StockScreen = ({navigation}) => {
   // State to manage the date range and search term
@@ -17,6 +18,7 @@ const StockScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     fetchStock();
   }, []);
@@ -42,41 +44,21 @@ const StockScreen = ({navigation}) => {
       const response = await sendGetRequest(Config.STOCK_LIST_API);
       if (response && response.data) {
         setStocksData(response.data);
-        setLoading(false);
+        setIsLoading(false);
         setError('');
       } else {
         setError('Error fetching stock data');
+        setIsLoading(false);
       }
     } catch (error) {
       setError('Error fetching stock data: ' + error.message);
+      setIsLoading(false);
     }
   };
 
   return (
     <View className="py-2 px-4">
       <View className="flex flex-row justify-end items-center gap-x-10">
-        {/* <TextInput
-          className="bg-gray-50 rounded-full mr-0 w-40"
-          mode="outlined"
-          label="Start Date"
-          value={startDate}
-          onChangeText={text => setStartDate(text)}
-        />
-        <TextInput
-          className="bg-gray-50 rounded-full mr-0 w-40"
-          mode="outlined"
-          label="End Date"
-          value={endDate}
-          onChangeText={text => setEndDate(text)}
-        />
-        <TouchableOpacity
-          className="bg-gray-700 font-bold mt-2 p-3 px-1 rounded-md"
-          // onPress={handleBack}
-        >
-          <Text className="text-center text-white w-28 font-semibold text-xl">
-            Show
-          </Text>
-        </TouchableOpacity> */}
         <TextInput
           className="bg-gray-100 rounded-full mr-0 w-96"
           mode="outlined"
@@ -95,7 +77,7 @@ const StockScreen = ({navigation}) => {
         <Text className="w-1/12 text-gray-950 font-extrabold">Price</Text>
       </View>
 
-      {loading && <ActivityIndicator size="large" color="black" />}
+      <LoaderOnly isLoading={isLoading} />
       {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
 
       <FlatList

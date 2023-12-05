@@ -18,7 +18,9 @@ const OrderDetailsModal = ({isVisible, orderDetails, onClose}) => {
   // Extracting order details
   const orderId = orderDetails.order_id;
   const orderDate = new Date(orderDetails.order_date).toLocaleDateString();
-  const deliveryDate = new Date(orderDetails.delivery_date).toLocaleDateString();
+  const deliveryDate = new Date(
+    orderDetails.delivery_date,
+  ).toLocaleDateString();
 
   // Create a function to format order details
   const formatOrderDetails = () => {
@@ -114,18 +116,67 @@ DeliveredDate: ${deliveryDate}
       onRequestClose={onClose}>
       <View className="flex-1 justify-center items-center">
         <View className="bg-white p-4 rounded w-5/6  shadow-xl shadow-gray-950">
-          <Text className="text-xl text-green-500 font-bold mb-2">
-            Order Details.
+          <Text className="text-2xl text-green-500 font-light mb-2">
+            Order Details. #{orderDetails.order_id}
           </Text>
-          <Text className="text-base">Order ID: {orderDetails.order_id}</Text>
-          <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-            <Text className="w-4  text-gray-950 font-extrabold">#</Text>
-            <Text className="w-1/12 text-gray-950 font-extrabold">Name</Text>
-            <Text className="w-1/12  text-gray-950 font-extrabold">Type</Text>
-            <Text className="w-1/8  text-gray-950 font-extrabold">Size</Text>
-            <Text className="w-1/8  text-gray-950 font-extrabold">
-              Quantity
+          
+          <View className="flex flex-row">
+          <View className="flex-1 flex-cal mb-4">
+            {/* Customer Details */}
+            <Text className="text-2xl text-gray-800 font-light mt-2">
+              Customer Details
             </Text>
+            <Text className="text-xl text-gray-800 font-bold mt-2">
+              Name: {customer.name}
+            </Text>
+            <Text className="text-xl text-gray-800 font-bold mt-2">
+              Phone: {customer.mobile}
+            </Text>
+            <Text className="text-xl text-gray-800 font-bold mt-2">
+            Whatsapp: {customer.whatsapp}
+            </Text>
+          </View>
+
+          <View className="flex-1 flex-cal mb-4">
+            {/* Billing Details */}
+            <Text className="text-2xl text-gray-800 font-light mt-2">
+              Billing Details
+            </Text>
+            <Text className="text-xl text-gray-950 font-bold mt-2">
+            Total: {billing.total}
+            </Text>
+            <Text className="text-xl text-gray-500 font-bold mt-2">
+            Discount: {billing.discount}
+            </Text>
+            <Text className="text-xl text-yellow-500 font-bold mt-2">
+            Paytotal: {billing.paytotal}
+            </Text>
+          </View>
+
+          <View className="flex-1 flex-cal mb-4">
+            {/* Billing Details */}
+            <Text className="text-xl text-gray-800 font-bold mt-2">
+              
+            </Text>
+            <Text className="text-xl text-green-600 font-bold mt-2">
+            Paid: {billing.paid}
+            </Text>
+            <Text className="text-xl text-red-500 font-bold mt-2">
+            Balance: {billing.balance}
+            </Text>
+            <Text className="text-xl text-indigo-600 font-bold mt-2">
+            Paidmode: {billing.paidmode}
+            </Text>
+          </View>
+
+          </View>
+
+          <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
+            <Text className="w-4 text-gray-950 font-extrabold">#</Text>
+            <Text className="w-1/12 text-gray-950 font-extrabold">Name</Text>
+            <Text className="w-1/12 text-gray-950 font-extrabold">Type</Text>
+            <Text className="w-1/8 text-gray-950 font-extrabold">Size</Text>
+            <Text className="w-1/8 text-gray-950 font-extrabold">Quantity</Text>
             <Text className="w-1/8  text-gray-950 font-extrabold">Unit</Text>
             <Text className="w-1/8  text-gray-950 font-extrabold">Price</Text>
             <Text className="w-1/8  text-gray-950 font-extrabold">Total</Text>
@@ -150,7 +201,7 @@ DeliveredDate: ${deliveryDate}
               onPress={() => handlePrintBill()}>
               <Text className="bg-green-500 text-lg p-2 text-white mt-4 rounded-md">
                 Print bill
-                </Text>
+              </Text>
             </TouchableOpacity>
             {/* Render InvoicePrint component based on visibility */}
             {isLoading && <Text>Loading, please wait...</Text>}

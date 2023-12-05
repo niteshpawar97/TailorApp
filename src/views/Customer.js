@@ -9,6 +9,7 @@ import {
 } from '../helpers/apiRequestWithHeaders';
 import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
 import MPModal from '../components/MPModal'; // Import the MPModal component
+import LoaderOnly from '../components/LoaderOnly'; // Adjust the path based on your project structure
 
 const CustomerScreen = ({navigation}) => {
   // State to manage the date range and search term
@@ -22,19 +23,22 @@ const CustomerScreen = ({navigation}) => {
   const [error, setError] = useState('');
   const [mpSuggestions, setMPSuggestions] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchCustomer = async () => {
     try {
       const response = await sendGetRequest(Config.CUSTOMER_LIST_API);
       if (response && response.data) {
         setCustomerData(response.data);
-        setLoading(false);
+        setIsLoading(false);
         setError('');
       } else {
         setError('Error fetching order history data');
+        setIsLoading(false);
       }
     } catch (error) {
       setError('Error fetching order history data: ' + error.message);
+      setIsLoading(false);
     }
   };
 
@@ -61,6 +65,7 @@ const CustomerScreen = ({navigation}) => {
   );
 
   const fetchMPSuggestions = async (mobile) => {
+    setIsLoading(true);
     try {
       const url = `${Config.CUSTOMER_MP_LIST_API}?q=search&m=${mobile}`;
       console.log('GET CUSTOMER_MP_LIST_API:', url);
@@ -70,9 +75,11 @@ const CustomerScreen = ({navigation}) => {
         setMPSuggestions(data.mp);
         console.log('setMPSuggestions: ', mpSuggestions);
         setIsModalVisible(true); // Show modal after fetching data
+        setIsLoading(false);
       }
     } catch (error) {
       console.log('Error fetching suggestions:', error);
+      setIsLoading(false);
     }
   };
 
@@ -100,8 +107,8 @@ const CustomerScreen = ({navigation}) => {
         <Text className="w-1/8  text-gray-950 font-extrabold">Action</Text>
       </View>
 
-      {loading && <ActivityIndicator size="large" color="black" />}
       {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
+      <LoaderOnly isLoading={isLoading} />
 
       <FlatList
         className="mb-4"
