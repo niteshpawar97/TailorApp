@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ScrollView, Image} from 'react-native';
+import {View, Text, ScrollView, RefreshControl} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Card, TextInput, Title} from 'react-native-paper';
+import {Card, Title} from 'react-native-paper';
 import LoginController from '../controllers/LoginController';
 import DashboardController from '../controllers/DashboardController'; // Import the checkLoginStatus function
 import ErrorPopup from '../components/ErrorPopup';
@@ -27,7 +27,7 @@ function DashboardView() {
     },
     recent_orders: [],
   });
-
+  const [refreshing, setRefreshing] = useState(false);
   const handleCloseError = () => {
     setError(null); // Clear the error message
   };
@@ -46,6 +46,12 @@ function DashboardView() {
     // Cleanup the interval when the component is unmounted
     return () => clearInterval(intervalId);
   }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    checkDashboard();
+    setRefreshing(false);
+  };
 
   const checkUserLoginStatus = async () => {
     try {
@@ -112,7 +118,10 @@ function DashboardView() {
   ];
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View className="flex-1 flex-col gap-1 ">
         <View className="flex-1 flex justify-between ">
           <View className="flex-1 p-4 bg-gray-50">
@@ -126,15 +135,23 @@ function DashboardView() {
               </>
             )}
 
-            <View className="flex flex-row gap-2 py-2">
+            <View className="flex flex-row gap-2 py-1">
               {cardData.map((card, index) => (
                 <Card key={index} className="flex-1 h-32 bg-gray-300 mt-2">
                   <View className="relative">
                     <View className="flex justify-end">
                       <Card.Content>
-                        <Title className="pl-2 text-gray-900 text-xl pt-5">
+                      <Title className="pl-2 text-gray-900 text-2xl pt-5">
                           {card.title}
                         </Title>
+                        <View
+                          style={{
+                            borderBottomWidth: 1,
+                            borderBottomColor: 'gray', // You can customize the color
+                            marginBottom: 10, // Adjust the margin as needed
+                            marginTop: 8,
+                          }}
+                        />
                         <Title className="p-2 text-gray-800 text-5xl">
                           {dashboardData.cards[card.dataKey] ?? 0}
                         </Title>
@@ -145,15 +162,23 @@ function DashboardView() {
               ))}
             </View>
 
-            <View className="flex flex-row gap-2 py-2">
+            <View className="flex flex-row gap-2 py-1">
               {cardData2.map((card, index) => (
                 <Card key={index} className="flex-1 h-32 bg-gray-300 mt-2">
                   <View className="relative">
                     <View className="flex justify-end">
                       <Card.Content>
-                        <Title className="pl-2 text-gray-900 text-xl pt-5">
+                      <Title className="pl-2 text-gray-900 text-2xl pt-5">
                           {card.title}
                         </Title>
+                        <View
+                          style={{
+                            borderBottomWidth: 1,
+                            borderBottomColor: 'gray', // You can customize the color
+                            marginBottom: 10, // Adjust the margin as needed
+                            marginTop: 8,
+                          }}
+                        />
                         <Title className="p-2 text-gray-800 text-5xl">
                           {dashboardData.cards[card.dataKey] ?? 0}
                         </Title>
@@ -164,15 +189,23 @@ function DashboardView() {
               ))}
             </View>
 
-            <View className="flex flex-row gap-2 py-2">
+            <View className="flex flex-row gap-2 py-1">
               {cardData3.map((card, index) => (
                 <Card key={index} className="flex-1 h-32 bg-gray-300 mt-2">
                   <View className="relative">
                     <View className="flex justify-end">
                       <Card.Content>
-                        <Title className="pl-2 text-gray-900 text-xl pt-5">
+                        <Title className="pl-2 text-gray-900 text-2xl pt-5">
                           {card.title}
                         </Title>
+                        <View
+                          style={{
+                            borderBottomWidth: 1,
+                            borderBottomColor: 'gray', // You can customize the color
+                            marginBottom: 10, // Adjust the margin as needed
+                            marginTop: 8,
+                          }}
+                        />
                         <Title className="p-2 text-gray-800 text-5xl">
                           {dashboardData.cards[card.dataKey] ?? 0}
                         </Title>
