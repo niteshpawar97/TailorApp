@@ -4,18 +4,17 @@ import {
   sendGetRequest,
 } from '../helpers/apiRequestWithHeaders';
 
-const DashboardController = {
-  checkDashboardData: async () => {
+const StockController = {
+
+  updateStock: async (stockData) => {
     try {
       // Use the sendGetRequest method to make a GET request
-      const response = await sendGetRequest(Config.DASHBOARD_API);
-  
+      const response = await sendPostRequest(Config.STOCK_UPDATE_API, stockData);
       if (response.error) {
         // If error is true, return the original error message as it is
         return response;
       }
-  
-      return response.data;
+      return response;
     } catch (error) {
       throw new Error(error);
     }
@@ -23,4 +22,4 @@ const DashboardController = {
   
 };
 
-export default DashboardController;
+export default StockController;

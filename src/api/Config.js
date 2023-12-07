@@ -9,6 +9,7 @@ const USER_CHECK_API    = `${API_BASE_URL}/user`; //get
 const PWD_CHANGE_API    = `${API_BASE_URL}/changepwd`; //post data: // {"oldpassword":"asdfg","newpassword":"asdf"}
 
 const BASE_CLIENT_API   = `${API_BASE_URL}/client`; // Sub use client
+const BASE_MANAGER_API   = `${API_BASE_URL}/manager`; // Sub use manager
 
 const DASHBOARD_API   = `${BASE_CLIENT_API}/dashboard`; // 
 const CUSTOMER_SEARCH_API   = `${BASE_CLIENT_API}/customers`; // 
@@ -21,6 +22,8 @@ const STOCK_LIST_API    =  `${BASE_CLIENT_API}/stocks`; //
 const PAY_HISTORY_API =  `${BASE_CLIENT_API}/payhistory`; // 
 const CUSTOMER_MP_LIST_API =  `${BASE_CLIENT_API}/mp`; //USE /api/client/mp?q=search&m=1234543456
 
+const STOCK_UPDATE_API    =  `${BASE_MANAGER_API}/updatestock`; // 
+
 
 
 export default {
@@ -29,4 +32,5 @@ export default {
   CUSTOMER_SEARCH_API, CUSTOMER_LIST_API, CUSTOMER_MP_LIST_API,
   ORDER_CREATE_API, ORDER_HISTORY_API, ORDER_DETAILS_API,
   ALL_PRODUCT_API, STOCK_LIST_API, PAY_HISTORY_API, 
+  STOCK_UPDATE_API, 
 };

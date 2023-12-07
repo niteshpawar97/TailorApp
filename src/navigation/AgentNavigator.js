@@ -30,7 +30,7 @@ const AgentNavigator = {
         'New Order': require('../assets/lottie/order.json'),
         History: require('../assets/lottie/history.json'),
         PayHistory: require('../assets/lottie/pay.json'),
-        AgentDash: require('../assets/lottie/stock.json'),
+        Stock: require('../assets/lottie/stock.json'),
         Customers: require('../assets/lottie/customer.json'),
       };
 
@@ -80,10 +80,10 @@ const AgentNavigator = {
         />
 
         <Tab.Screen
-          name="AgentDash"
+          name="Stock"
           component={AgentDash}
           options={({navigation}) => ({
-            headerTitle: 'AgentDash',
+            headerTitle: 'Stock',
             headerTintColor: '#FFFFFF', // Set the text color
             headerStyle: {backgroundColor: '#495373'},
             headerLeft: () => (
@@ -119,7 +119,7 @@ const AgentNavigator = {
               />
             ),
 
-            tabBarIcon: ({color, size}) => getTabIcon('Customers', color, size),
+            tabBarIcon: ({color, size}) => getTabIcon('Stock ', color, size),
           })}
         />
 

@@ -99,13 +99,13 @@ const LoginView = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             // onPress={handleLogin}
             className="bg-gray-400  w-72 font-bold py-2 px-4 rounded-xl">
             <Text className="text-center text-gray-700 font-semibold text-xl">
               Reset Password
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <ErrorPopup
             isVisible={error !== null}

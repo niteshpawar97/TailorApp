@@ -9,13 +9,10 @@ import LoaderOnly from '../components/LoaderOnly'; // Adjust the path based on y
 
 const StockScreen = ({navigation}) => {
   // State to manage the date range and search term
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [stocksData, setStocksData] = useState([]);
 
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
