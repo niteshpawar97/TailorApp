@@ -6,13 +6,12 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   FlatList,
-  SectionList,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
 } from 'react-native';
-import {TextInput, IconButton, Button, RadioButton} from 'react-native-paper';
+import {TextInput, IconButton, RadioButton} from 'react-native-paper';
 import Config from '../api/Config';
 import {
   sendPostRequest,
@@ -31,9 +30,14 @@ import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {LogBox} from 'react-native';
 import LoaderOnly from '../components/LoaderOnly'; // Adjust the path based on your project structure
+import CheckBox from 'react-native-check-box';
 
-const {CUSTOMER_SEARCH_API, ALL_PRODUCT_API, ORDER_CREATE_API, ORDER_DETAILS_API} =
-  Config;
+const {
+  CUSTOMER_SEARCH_API,
+  ALL_PRODUCT_API,
+  ORDER_CREATE_API,
+  ORDER_DETAILS_API,
+} = Config;
 
 const NewOrderView = () => {
   // Set the displayName property for the functional component
@@ -55,14 +59,13 @@ const NewOrderView = () => {
       setCurrentStep(1);
       setIsLoading(false);
       setQuantity('');
-
       setPaid('0');
       setPaidmode('');
       setDiscount('0');
       setBalance('0');
-
       setSelectedMaterial('Ready Made');
-      setMaterial('');
+      setMaterialColors([]);
+      setOpenMC(false);
       setOpen(false);
       setProduct(null);
       setProductItems([]);
@@ -80,8 +83,10 @@ const NewOrderView = () => {
       setOrderPrintVisible(false);
       setMPName('');
       setNewMpName('');
-      
       setIsLoader(false);
+      setIsChecked(false);
+      setClothColor('');
+      setMeter('');
     }, []),
   );
 
@@ -98,19 +103,17 @@ const NewOrderView = () => {
   const [measurement, setMeasurement] = useState('');
   const [newMpName, setNewMpName] = useState('');
   const [quantity, setQuantity] = useState('');
-
   const [isLoader, setIsLoader] = useState(false);
   const [paid, setPaid] = useState('0');
   const [paidmode, setPaidmode] = useState('');
   const [discount, setDiscount] = useState('0');
   const [balance, setBalance] = useState('0');
-
   const [selectedMaterial, setSelectedMaterial] = useState('Ready Made');
-  const [material, setMaterial] = useState('');
+  const [materialColors, setMaterialColors] = useState('');
+  const [openMC, setOpenMC] = useState(false);
   const [open, setOpen] = useState(false);
   const [openMP, setOpenMP] = useState(false);
   const [mpName, setMPName] = useState('');
-
   const [product, setProduct] = useState(null);
   const [productitems, setProductItems] = useState([]);
   const [opensize, setOpenSize] = useState(false);
@@ -128,15 +131,97 @@ const NewOrderView = () => {
   const [invoiceDetails, setInvoiceDetails] = useState([]);
   const [isInvoicePrintVisible, setInvoicePrintVisible] = useState(false);
   const [isOrderPrintVisible, setOrderPrintVisible] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [clothColor, setClothColor] = useState('');
+  const [meter, setMeter] = useState('');
+
+  const generateUniqueTagId = () => {
+    // Generate a random 3-digit number
+    return Math.floor(100 + Math.random() * 900);
+  };
+  // Initial unique tag ID
+  const initialUniqueTagId = generateUniqueTagId();
+  const [uniqueTagId, setUniqueTagId] = useState(initialUniqueTagId);
 
   const handleAddItem = () => {
+    const newUniqueTagId = generateUniqueTagId();
+    setUniqueTagId(newUniqueTagId);
+
     if (selectedMaterial === 'Stitching') {
-      if (newMpName && measurement && product && quantity) {
+      if (
+        newMpName &&
+        measurement &&
+        product &&
+        quantity &&
+        clothColor &&
+        meter &&
+        isChecked
+      ) {
+        // const selectedClothColor = materialColors.find(
+        //   materialColor => materialColor.id === clothColor,
+        // );
+        // if (selectedClothColor) {
+        //   const newItemcolor = {
+        //     tag: uniqueTagId,
+        //     value: selectedClothColor.id,
+        //     dress_type: selectedClothColor.type,
+        //     dress_name: selectedClothColor.name,
+        //     unit: selectedClothColor.unit,
+        //     price: selectedClothColor.price,
+        //     size,
+        //     new_mp_name: '',
+        //     measurement: '',
+        //     meter: meter,
+        //     quantity: '',
+        //     total: selectedClothColor.price * quantity,
+        //   };
+        //   // If selectedClothColor doesn't exist, add only newItem
+        //   setSelectedItems([...selectedItems, newItemcolor]);
+        //   console.log('selectedClothColor Items:', newItemcolor);
+        //   console.log('selectedItems :', selectedItems);
+        //   console.log('setSelectedItems :', setSelectedItems);
+        // }
+
+        const selectedProduct = productitems.find(item => item.id === product);
+        if (selectedProduct) {
+          const newItem = {
+            tag: uniqueTagId,
+            value: selectedProduct.id,
+            dress_type: selectedProduct.type,
+            dress_name: selectedProduct.name,
+            unit: selectedProduct.unit,
+            price: selectedProduct.price,
+            size,
+            new_mp_name: newMpName,
+            measurement: measurement,
+            meter: '',
+            quantity,
+            total: selectedProduct.price * quantity,
+          };
+          // If selectedClothColor doesn't exist but selectedProduct exists, add only newItem
+          setSelectedItems([...selectedItems, newItem]);
+
+          setClothColor('');
+          setIsChecked(false);
+          setMeter('');
+          setProduct('');
+          setSize('freesize');
+          setQuantity('');
+          setNewMpName('');
+          setMeasurement('');
+          setResetFields(true);
+          setTableVisible(true);
+          console.log('Selected Maah Items:', newItem);
+          console.log('Selected Maah Items:', selectedItems);
+        }
+
+      } else if (newMpName && measurement && product && quantity) {
         const selectedProduct = productitems.find(item => item.id === product);
         //console.log('selectedProduct:', selectedProduct); // Debug statement
 
         if (selectedProduct) {
           const newItem = {
+            tag: uniqueTagId,
             value: selectedProduct.id,
             dress_type: selectedProduct.type,
             dress_name: selectedProduct.name,
@@ -169,6 +254,7 @@ const NewOrderView = () => {
 
         if (selectedProduct) {
           const newItem = {
+            tag: uniqueTagId,
             value: selectedProduct.id,
             dress_type: selectedProduct.type,
             dress_name: selectedProduct.name,
@@ -220,10 +306,10 @@ const NewOrderView = () => {
         console.log('Products data saved successfully.');
         setShouldFetchSavedProducts(false);
       } else {
-        console.warn('No products data to save.');
+        console.log('No products data to save.');
       }
     } catch (error) {
-      console.error('Error fetching and saving products data:', error);
+      console.log('Error fetching and saving products data:', error);
     }
   };
 
@@ -232,6 +318,10 @@ const NewOrderView = () => {
     const key = 'products'; // The key you used to save the user data
     const productsData = await getDataFromAsyncStorage(key); // Assuming productsData is a JSON string
     const parsedProductsData = JSON.parse(productsData);
+
+    const MaterialType = 'Sale Material';
+    setMaterialColors(parsedProductsData[MaterialType]);
+
     if (productsData) {
       // User data found; you can use it
       if (
@@ -244,7 +334,7 @@ const NewOrderView = () => {
         );
       } else {
         // Handle the case where selectedMaterial is not a valid key
-        console.warn('Invalid selectedMaterial:', parsedProductsData);
+        console.log('Invalid selectedMaterial:', parsedProductsData);
         // You can set a default value or show an error message, for example.
       }
     } else {
@@ -460,7 +550,7 @@ const NewOrderView = () => {
       // You can add more checks or actions for step 2 here
     } else if (currentStep === 3) {
       // Handle step 3 logic
-      
+
       // Check if any of the required fields are empty
       if (!dDate) {
         setError('Please fill in all required fields');
@@ -513,11 +603,10 @@ const NewOrderView = () => {
       const invoiceData = createInvoiceData(dDate, customer, products, billing);
       // console.warn('products: ', products);
       // console.warn('invoiceData: ', invoiceData);
-      
+
       // Send the POST request
       const createOrder = async () => {
-        
-      setIsLoader(true);
+        setIsLoader(true);
         try {
           const response = await sendPostRequest(ORDER_CREATE_API, invoiceData);
 
@@ -574,7 +663,6 @@ const NewOrderView = () => {
             setIsLoader(false);
           }
         } else {
-          
           console.log('No order ID available to fetch details.');
           setIsLoader(false);
         }
@@ -635,7 +723,6 @@ const NewOrderView = () => {
   const paidHandleChangeText = text => {
     // Remove leading zeros
     const sanitizedPaid = text.replace(/^0+/, '');
-
     // Update the state when the user types a new value or clears the input
     setPaid(sanitizedPaid === '' ? '0' : sanitizedPaid);
   };
@@ -648,9 +735,12 @@ const NewOrderView = () => {
   const disHandleChangeText = text => {
     // Remove leading zeros
     const sanitizedDisc = text.replace(/^0+/, '');
-
     // Update the state when the user types a new value or clears the input
     setDiscount(sanitizedDisc === '' ? '0' : sanitizedDisc);
+  };
+
+  const handleMaterialChange = () => {
+    setShowTextInput(!showTextInput); // Toggle the state when the Material changes
   };
 
   return (
@@ -752,7 +842,7 @@ const NewOrderView = () => {
               {currentStep === 2 && (
                 // Render step 2 fields
                 <View className="flex-1 justify items bg-gray-100 gap-2">
-                  <View className="flex justify-start ">
+                  <View className="flex justify-start">
                     <RadioButton.Group
                       onValueChange={value => {
                         setSelectedMaterial(value);
@@ -884,6 +974,53 @@ const NewOrderView = () => {
                       keyboardType="phone-pad"
                     />
                   </View>
+
+                  {selectedMaterial === 'Stitching' && (
+                    <CheckBox
+                      value={isChecked}
+                      onClick={() => setIsChecked(!isChecked)}
+                      isChecked={isChecked}
+                      rightText="Material"
+                      righTextStyle={{
+                        fontSize: 16,
+                        color: isChecked ? 'green' : 'black',
+                        fontWeight: 'bold',
+                      }}
+                    />
+                  )}
+
+                  {selectedMaterial === 'Stitching' && isChecked && (
+                    <View>
+                      <DropDownPicker
+                        open={openMC}
+                        value={clothColor}
+                        items={materialColors.map(materialColor => ({
+                          label: materialColor.name,
+                          value: materialColor.id, // Set the entire product object as the value
+                        }))}
+                        setOpen={setOpenMC}
+                        setValue={setClothColor}
+                        setItems={() => {}}
+                        placeholder="Select Color"
+                        placeholderStyle={{fontWeight: 'bold', fontSize: 16}}
+                        disableBorderRadius={false}
+                        showArrowIcon={true}
+                        showTickIcon={true}
+                        theme="LIGHT"
+                        autoScroll
+                        dropDownDirection="TOP"
+                      />
+
+                      <TextInput
+                        mode="outlined"
+                        label="Meter"
+                        value={meter}
+                        keyboardType="phone-pad"
+                        onChangeText={text => setMeter(text)}
+                        style={{marginTop: 10}}
+                      />
+                    </View>
+                  )}
 
                   <TouchableOpacity
                     className="bg-lime-500 text-white font-bold py-2 px-4 rounded-md"
