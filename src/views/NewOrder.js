@@ -1223,6 +1223,9 @@ const NewOrderView = () => {
 
               <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
                 <Text className="w-1/12  text-gray-950 font-extrabold">#</Text>
+                <Text className="w-1/12  text-gray-950 font-extrabold">
+                  Tag
+                </Text>
                 <Text className="w-1/6 text-gray-950 font-extrabold">
                   Item Name
                 </Text>
@@ -1253,6 +1256,9 @@ const NewOrderView = () => {
                   className="flex flex-row justify-between items-center bg-gray-100 border py-1 px-3">
                   <Text className="w-1/12 text-zinc-700 font-extrabold">
                     {index + 1}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.tag}
                   </Text>
                   <Text className="w-1/6 text-zinc-700 font-semibold">
                     {item.dress_name ? item.dress_name : 'N/A'}
@@ -1293,7 +1299,8 @@ const NewOrderView = () => {
               </Text> */}
 
               <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-                <Text className="w-1/12  text-gray-950 font-light">#</Text>
+              <Text className="w-1/12  text-gray-950 font-light">#</Text>
+              <Text className="w-1/12  text-gray-950 font-light">Tag</Text>
                 <Text className="w-1/6 text-gray-950 font-light">
                   Item Name
                 </Text>
@@ -1312,6 +1319,9 @@ const NewOrderView = () => {
                   className="flex flex-row justify-between items-center bg-gray-100 border py-2 px-3">
                   <Text className="w-1/12 text-zinc-700 font-extrabold">
                     {index + 1}
+                  </Text>
+                  <Text className="w-1/12 text-zinc-700 font-semibold">
+                    {item.tag}
                   </Text>
                   <Text className="w-1/6 text-zinc-700 font-semibold">
                     {item.dress_name ? item.dress_name : 'N/A'}

@@ -36,6 +36,7 @@ DeliveredDate: ${deliveryDate}
     // Loop through selected items and add details to the formatted string
     selectedItems.forEach((item, index) => {
       formattedDetails += `
+    TagID  : *item.tag*
     Dress Type  : ${item.dress_type}
     Dress Name  : ${item.dress_name}
     Size        : ${item.size || '-'}
@@ -81,28 +82,28 @@ DeliveredDate: ${deliveryDate}
 
   const renderItem = ({item, index}) => (
     <View className="flex flex-row justify-between items-center bg-gray-100 border border-gray-400 py-1 px-3 mt-1">
-      <Text className="w-4 text-gray-950  text-lg font-medium">
+      <Text className="w-4 text-gray-950 text-center text-lg font-medium">
         {index + 1}
       </Text>
-      <Text className="w-1/12 text-gray-950 text-lg font-bold">
+      <Text className="w-1/12 text-gray-950 text-center text-lg font-bold">
         {item.dress_name}
       </Text>
-      <Text className="w-1/12 text-gray-950  text-lg font-medium">
+      <Text className="w-1/12 text-gray-950 text-center text-lg font-medium">
         {item.dress_type}
       </Text>
-      <Text className="w-1/8 text-gray-950  text-lg font-medium">
+      <Text className="w-1/8 text-gray-950 text-center text-lg font-medium">
         {item.size}
       </Text>
-      <Text className="w-1/8 text-gray-950  text-lg font-medium">
+      <Text className="w-1/8 text-gray-950 text-center text-lg font-medium">
         {item.quantity}
       </Text>
-      <Text className="w-1/8 text-gray-950  text-lg font-medium">
+      <Text className="w-1/8 text-gray-950 text-center text-lg font-medium">
         {item.unit}
       </Text>
-      <Text className="w-1/8 text-gray-950  text-lg font-medium">
+      <Text className="w-1/8 text-gray-950 text-center text-lg font-medium">
         {item.price}
       </Text>
-      <Text className="w-1/8 text-gray-950  text-lg font-medium">
+      <Text className="w-1/8 text-gray-950 text-center text-lg font-medium">
         {item.total}
       </Text>
     </View>
@@ -119,67 +120,64 @@ DeliveredDate: ${deliveryDate}
           <Text className="text-2xl text-green-500 font-light mb-2">
             Order Details. #{orderDetails.order_id}
           </Text>
-          
+
           <View className="flex flex-row">
-          <View className="flex-1 flex-cal mb-4">
-            {/* Customer Details */}
-            <Text className="text-2xl text-gray-800 font-light mt-2">
-              Customer Details
-            </Text>
-            <Text className="text-xl text-gray-800 font-bold mt-2">
-              Name: {customer.name}
-            </Text>
-            <Text className="text-xl text-gray-800 font-bold mt-2">
-              Phone: {customer.mobile}
-            </Text>
-            <Text className="text-xl text-gray-800 font-bold mt-2">
-            Whatsapp: {customer.whatsapp}
-            </Text>
-          </View>
+            <View className="flex-1 flex-cal mb-4">
+              {/* Customer Details */}
+              <Text className="text-2xl text-gray-800 font-light mt-2">
+                Customer Details
+              </Text>
+              <Text className="text-xl text-gray-800 font-bold mt-2">
+                Name: {customer.name}
+              </Text>
+              <Text className="text-xl text-gray-800 font-bold mt-2">
+                Phone: {customer.mobile}
+              </Text>
+              <Text className="text-xl text-gray-800 font-bold mt-2">
+                Whatsapp: {customer.whatsapp}
+              </Text>
+            </View>
 
-          <View className="flex-1 flex-cal mb-4">
-            {/* Billing Details */}
-            <Text className="text-2xl text-gray-800 font-light mt-2">
-              Billing Details
-            </Text>
-            <Text className="text-xl text-gray-950 font-bold mt-2">
-            Total: {billing.total}
-            </Text>
-            <Text className="text-xl text-gray-500 font-bold mt-2">
-            Discount: {billing.discount}
-            </Text>
-            <Text className="text-xl text-yellow-500 font-bold mt-2">
-            Paytotal: {billing.paytotal}
-            </Text>
-          </View>
+            <View className="flex-1 flex-cal mb-4">
+              {/* Billing Details */}
+              <Text className="text-2xl text-gray-800 font-light mt-2">
+                Billing Details
+              </Text>
+              <Text className="text-xl text-gray-950 font-bold mt-2">
+                Total: {billing.total}
+              </Text>
+              <Text className="text-xl text-gray-500 font-bold mt-2">
+                Discount: {billing.discount}
+              </Text>
+              <Text className="text-xl text-yellow-500 font-bold mt-2">
+                Paytotal: {billing.paytotal}
+              </Text>
+            </View>
 
-          <View className="flex-1 flex-cal mb-4">
-            {/* Billing Details */}
-            <Text className="text-xl text-gray-800 font-bold mt-2">
-              
-            </Text>
-            <Text className="text-xl text-green-600 font-bold mt-2">
-            Paid: {billing.paid}
-            </Text>
-            <Text className="text-xl text-red-500 font-bold mt-2">
-            Balance: {billing.balance}
-            </Text>
-            <Text className="text-xl text-indigo-600 font-bold mt-2">
-            Paidmode: {billing.paidmode}
-            </Text>
-          </View>
-
+            <View className="flex-1 flex-cal mb-4">
+              {/* Billing Details */}
+              <Text className="text-xl text-gray-800 font-bold mt-2"></Text>
+              <Text className="text-xl text-green-600 font-bold mt-2">
+                Paid: {billing.paid}
+              </Text>
+              <Text className="text-xl text-red-500 font-bold mt-2">
+                Balance: {billing.balance}
+              </Text>
+              <Text className="text-xl text-indigo-600 font-bold mt-2">
+                Paidmode: {billing.paidmode}
+              </Text>
+            </View>
           </View>
 
           <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-            <Text className="w-4 text-gray-950 font-extrabold">#</Text>
-            <Text className="w-1/12 text-gray-950 font-extrabold">Name</Text>
-            <Text className="w-1/12 text-gray-950 font-extrabold">Type</Text>
-            <Text className="w-1/8 text-gray-950 font-extrabold">Size</Text>
-            <Text className="w-1/8 text-gray-950 font-extrabold">Quantity</Text>
-            <Text className="w-1/8  text-gray-950 font-extrabold">Unit</Text>
-            <Text className="w-1/8  text-gray-950 font-extrabold">Price</Text>
-            <Text className="w-1/8  text-gray-950 font-extrabold">Total</Text>
+            <Text className="w-4 text-gray-950 font-extrabold  text-center ">#</Text>
+            <Text className="w-1/12 text-gray-950 font-extrabold  text-center ">Name</Text>
+            <Text className="w-1/12 text-gray-950 font-extrabold  text-center ">Type</Text>
+            <Text className="w-1/8 text-gray-950 font-extrabold  text-center ">Size</Text>
+            <Text className="w-1/8 text-gray-950 font-extrabold  text-center ">Quantity</Text>
+            <Text className="w-1/8  text-gray-950 font-extrabold  text-center ">Unit</Text>
+            <Text className="w-1/8  text-gray-950 font-extrabold  text-center ">Price</Text>
+            <Text className="w-1/8  text-gray-950 font-extrabold  text-center ">Total</Text>
           </View>
 
           {/* Use FlatList to render the list of products */}
