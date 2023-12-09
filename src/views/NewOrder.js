@@ -168,11 +168,11 @@ const NewOrderView = () => {
           dress_name: selectedClothColor.name,
           unit: selectedClothColor.unit,
           price: selectedClothColor.price,
-          size,
+          size: '',
           new_mp_name: '',
           measurement: '',
           meter: meter,
-          quantity: '',
+          quantity: meter,
           total: selectedClothColor.price * quantity,
         };
 
@@ -185,7 +185,7 @@ const NewOrderView = () => {
           dress_name: selectedProduct.name,
           unit: selectedProduct.unit,
           price: selectedProduct.price,
-          size,
+          size: '',
           new_mp_name: newMpName,
           measurement: measurement,
           meter: '',
@@ -203,7 +203,6 @@ const NewOrderView = () => {
         setIsChecked(false);
         setMeter('');
         setProduct('');
-        setSize('freesize');
         setQuantity('');
         setNewMpName('');
         setMeasurement('');
@@ -229,7 +228,7 @@ const NewOrderView = () => {
             dress_name: selectedProduct.name,
             unit: selectedProduct.unit,
             price: selectedProduct.price,
-            size,
+            size: '',
             new_mp_name: newMpName,
             measurement: measurement,
             meter: '',
@@ -239,7 +238,6 @@ const NewOrderView = () => {
 
           setSelectedItems([...selectedItems, newItem]);
           setProduct('');
-          setSize('freesize');
           setQuantity('');
           setNewMpName('');
           setMeasurement('');

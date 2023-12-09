@@ -41,7 +41,7 @@ function DashboardView() {
     // Set up a timer to periodically check the dashboard data (every 5 minutes in this example)
     const intervalId = setInterval(() => {
       checkDashboard();
-    }, 2 * 60 * 1000); // 5 minutes in milliseconds
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
 
     // Cleanup the interval when the component is unmounted
     return () => clearInterval(intervalId);
