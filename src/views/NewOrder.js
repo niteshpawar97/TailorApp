@@ -157,65 +157,67 @@ const NewOrderView = () => {
         meter &&
         isChecked
       ) {
-        // const selectedClothColor = materialColors.find(
-        //   materialColor => materialColor.id === clothColor,
-        // );
-        // if (selectedClothColor) {
-        //   const newItemcolor = {
-        //     tag: uniqueTagId,
-        //     value: selectedClothColor.id,
-        //     dress_type: selectedClothColor.type,
-        //     dress_name: selectedClothColor.name,
-        //     unit: selectedClothColor.unit,
-        //     price: selectedClothColor.price,
-        //     size,
-        //     new_mp_name: '',
-        //     measurement: '',
-        //     meter: meter,
-        //     quantity: '',
-        //     total: selectedClothColor.price * quantity,
-        //   };
-        //   // If selectedClothColor doesn't exist, add only newItem
-        //   setSelectedItems([...selectedItems, newItemcolor]);
-        //   console.log('selectedClothColor Items:', newItemcolor);
-        //   console.log('selectedItems :', selectedItems);
-        //   console.log('setSelectedItems :', setSelectedItems);
-        // }
+        const selectedClothColor = materialColors.find(
+          materialColor => materialColor.id === clothColor,
+        );
+
+        const newItemcolor = {
+          tag: uniqueTagId,
+          value: selectedClothColor.id,
+          dress_type: selectedClothColor.type,
+          dress_name: selectedClothColor.name,
+          unit: selectedClothColor.unit,
+          price: selectedClothColor.price,
+          size,
+          new_mp_name: '',
+          measurement: '',
+          meter: meter,
+          quantity: '',
+          total: selectedClothColor.price * quantity,
+        };
 
         const selectedProduct = productitems.find(item => item.id === product);
-        if (selectedProduct) {
-          const newItem = {
-            tag: uniqueTagId,
-            value: selectedProduct.id,
-            dress_type: selectedProduct.type,
-            dress_name: selectedProduct.name,
-            unit: selectedProduct.unit,
-            price: selectedProduct.price,
-            size,
-            new_mp_name: newMpName,
-            measurement: measurement,
-            meter: '',
-            quantity,
-            total: selectedProduct.price * quantity,
-          };
-          // If selectedClothColor doesn't exist but selectedProduct exists, add only newItem
-          setSelectedItems([...selectedItems, newItem]);
 
-          setClothColor('');
-          setIsChecked(false);
-          setMeter('');
-          setProduct('');
-          setSize('freesize');
-          setQuantity('');
-          setNewMpName('');
-          setMeasurement('');
-          setResetFields(true);
-          setTableVisible(true);
-          console.log('Selected Maah Items:', newItem);
-          console.log('Selected Maah Items:', selectedItems);
-        }
+        const newItem = {
+          tag: uniqueTagId,
+          value: selectedProduct.id,
+          dress_type: selectedProduct.type,
+          dress_name: selectedProduct.name,
+          unit: selectedProduct.unit,
+          price: selectedProduct.price,
+          size,
+          new_mp_name: newMpName,
+          measurement: measurement,
+          meter: '',
+          quantity,
+          total: selectedProduct.price * quantity,
+        };
 
-      } else if (newMpName && measurement && product && quantity) {
+        // If selectedClothColor doesn't exist, add only newItem
+        setSelectedItems([...selectedItems, newItem, newItemcolor]);
+        console.log('selectedClothColor Items:', newItemcolor);
+        console.log('selectedItems :', selectedItems);
+        console.log('setSelectedItems :', setSelectedItems);
+
+        setClothColor('');
+        setIsChecked(false);
+        setMeter('');
+        setProduct('');
+        setSize('freesize');
+        setQuantity('');
+        setNewMpName('');
+        setMeasurement('');
+        setResetFields(true);
+        setTableVisible(true);
+        console.log('Selected Maah Items:', newItem);
+        console.log('Selected Maah Items:', selectedItems);
+      } else if (
+        selectedMaterial === 'Stitching' &&
+        newMpName &&
+        measurement &&
+        product &&
+        quantity
+      ) {
         const selectedProduct = productitems.find(item => item.id === product);
         //console.log('selectedProduct:', selectedProduct); // Debug statement
 
