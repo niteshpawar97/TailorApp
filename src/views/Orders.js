@@ -1,11 +1,6 @@
 // History.js
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import {View, Text, TouchableOpacity, FlatList} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Config from '../api/Config';
 import {
@@ -58,7 +53,7 @@ const HistoryScreen = ({navigation}) => {
     setIsLoading(true);
     try {
       const response = await sendGetRequest(Config.ORDER_HISTORY_API);
-      
+
       if (response && response.data) {
         setIsLoading(true);
         setOrderHistoryData(response.data);
@@ -74,23 +69,21 @@ const HistoryScreen = ({navigation}) => {
     }
   };
 
-  // fetchOrderDetails single order 
+  // fetchOrderDetails single order
   const fetchOrderDetails = async order_id => {
     setIsLoading(true);
     try {
-      
       setIsLoading(true);
       const url = `${Config.ORDER_DETAILS_API}?oid=${order_id}`;
       console.log('GET ORDER_DETAILS_API:', url);
       const data = await sendGetRequest(url);
       console.log('GET Response:', data);
       if (data.error === false) {
-        
         setOrderDetails(data.data[0]);
         setIsModalVisible(true); // Show modal after fetching data
+        setIsLoading(false);
       }
     } catch (error) {
-      
       setIsLoading(false);
       console.log('Error fetching order details:', error);
     }
@@ -104,22 +97,20 @@ const HistoryScreen = ({navigation}) => {
 
   return (
     <View className="py-2 px-4">
-     
       {/* Render your content or handle error state */}
-      
-        <View className="flex flex-row justify-end items-center gap-x-10">
-          <TextInput
-            className="bg-gray-200 rounded-full mr-0 w-96"
-            mode="outlined"
-            label="Search"
-            value={searchTerm}
-            onChangeText={text => setSearchTerm(text)}
-          />
-        </View>
-      
+
+      <View className="flex flex-row justify-end items-center gap-x-10">
+        <TextInput
+          className="bg-gray-200 rounded-full mr-0 w-96"
+          mode="outlined"
+          label="Search"
+          value={searchTerm}
+          onChangeText={text => setSearchTerm(text)}
+        />
+      </View>
 
       <View className="flex flex-row justify-between bg-gray-300 mt-1  py-2 px-3">
-        <Text className="w-2 text-gray-950 font-normal">#</Text>
+        <Text className="w-10 text-gray-950 font-normal">#</Text>
         <Text className="w-1/12 text-gray-950 font-normal">Order Id</Text>
         <Text className="w-1/12 text-gray-950 font-normal">Name</Text>
         <Text className="w-1/12 text-gray-950 font-normal">Mobile</Text>
@@ -133,13 +124,16 @@ const HistoryScreen = ({navigation}) => {
       {error && <Text style={{color: 'red', marginBottom: 10}}>{error}</Text>}
       <LoaderOnly isLoading={isLoading} />
 
+      {/* Show loader only when isLoadingDetails is true */}
+      {isLoadingDetails && <LoaderOnly isLoading={true} />}
+
       <FlatList
         className="mb-4"
         data={filteredData}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item, index}) => (
           <View className="flex flex-row justify-between items-center bg-gray-100 border py-1 px-3 mt-1">
-            <Text className="w-2 text-gray-950  text-lg font-medium">
+            <Text className="w-10 text-gray-950  text-lg font-medium">
               {index + 1}
             </Text>
             <Text className="w-1/12 text-gray-950  text-lg font-medium">
@@ -151,9 +145,13 @@ const HistoryScreen = ({navigation}) => {
             <Text className="w-1/12 text-gray-950  text-lg font-medium">
               {item.mobile}
             </Text>
-            <Text className="w-1/12 text-gray-950  text-lg font-medium">
+            <Text
+              className={`w-1/12 text-lg font-medium ${
+                item.balance === '0' ? 'text-gray-800' : 'text-red-500'
+              }`}>
               {item.balance}
             </Text>
+
             <Text className="w-1/12 text-gray-950  text-lg font-medium">
               {item.order_date}
             </Text>
@@ -170,22 +168,18 @@ const HistoryScreen = ({navigation}) => {
                 View
               </Text>
             </TouchableOpacity>
-             {/* Show loader only when isLoadingDetails is true */}
-      {isLoadingDetails && <LoaderOnly isLoading={true} />}
-
-            {/* Render OrderDetailsModal when isModalVisible is true */}
-            {isModalVisible && (
-              
-              <OrderDetailsModal
-                isVisible={isModalVisible}
-                orderDetails={orderDetails}
-                onClose={closeModal}
-              />
-              
-            )}
           </View>
         )}
       />
+
+      {/* Render OrderDetailsModal outside of FlatList */}
+      {isModalVisible && (
+        <OrderDetailsModal
+          isVisible={isModalVisible}
+          orderDetails={orderDetails}
+          onClose={closeModal}
+        />
+      )}
     </View>
   );
 };

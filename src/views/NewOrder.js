@@ -5,10 +5,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  FlatList,
   ScrollView,
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
 } from 'react-native';
 import {TextInput, IconButton, RadioButton} from 'react-native-paper';
